@@ -1,0 +1,195 @@
+﻿
+@{
+    ViewBag.Title = "Assign Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@using TimeCard.BL
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+
+<br /><br />
+<div class="row">
+    <center><h3><strong>@ViewBag.p.Code</strong></h3></center>
+</div>
+<br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Assign Labor Category</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("PostAssignProject", "User")">
+                        <input type="hidden" name="Project_Id" value=@ViewBag.p.Id />
+                        <div>
+                            <label>Employees</label>
+                            <select class="form-control" name="User_Id" required>
+                                <option value="">Select One</option>
+                                @foreach (User u in ViewBag.allusers)
+                                {
+                                    <option value=@u.Id>@u.FirstName&nbsp;@u.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <br />
+                        <div>
+                            <label>Labor Categories</label>
+                            <select class="form-control" name="LaborCategory_Id" required>
+                                <option value="">Select One</option>
+                                @foreach (LaborCategory l in ViewBag.laborcategories)
+                                {
+                                    <option value=@l.Id>@l.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+<br />
+<br />
+@if (@ViewBag.message != null)
+{
+    <center><h2><strong>@ViewBag.message</strong></h2></center>
+}
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header smaller lighter blue"><strong>Assigned Projects</strong></h3>
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div>
+            <table id="myTable" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Project Code</th>
+                        <th>Employee Name</th>                        
+                        <th>Labor Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (ViewBag.pucs != null)
+                    {
+                        foreach (ProjectUserCategory u in ViewBag.pucs)
+                        {
+                        <tr>
+                            <td>@u.ProjectCategory.Project.Code</td>
+                            <td>@u.User.FirstName&nbsp;@u.User.LastName</td>
+                            <td>@u.ProjectCategory.LaborCategory.Name</td>
+                            <td>
+                                &nbsp; &nbsp;
+                                @*<a class="green" onclick="DeleteProject(@u.Id)" data-toggle="modal" data-target="#editModal">
+                                    <i class="ace-icon fa fa-pencil bigger-160"></i>
+                                </a>*@ 
+                                <a class="red" onclick="DeleteProject(@u.Id)" data-toggle="modal" data-target="#deleteModal">
+                                    <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+@*<div class="modal fade" id="editModal" role="dialog">
+        <div class="modal-dialog">
+             Modal content
+            <div class="modal-content">
+                <form class="form-horizontal form-label-left" method="post" action="@Url.Action("UpdateAssignProject", "Home")">
+                    <input type="hidden" name="Id" id="ProjectUserCategoryId" />
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><strong>Edit Assigned Project</strong></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <label>Employees</label>
+                            <select class="form-control" name="User_Id" required>
+                                <option value="">Select One</option>
+                                @foreach (User u in ViewBag.allusers)
+                                {
+                                    <option value=@u.Id>@u.FirstName&nbsp;@u.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <br />
+                        <div>
+                            <label>Labor Categories</label>
+                            <select class="form-control" name="LaborCategory_Id" required>
+                                <option value="">Select One</option>
+                                @foreach (LaborCategory l in ViewBag.laborcategories)
+                                {
+                                    <option value=@l.Id>@l.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="modal-footer"> 
+                            <button type="submit" class="btn btn-primary pull-right">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>*@
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog">
+         Modal content
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Warning</strong></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this project?</p>
+            </div>
+            <div class="modal-footer">
+                <form class="form-horizontal form-label-left" method="post" action="@Url.Action("DeleteAssignProject", "User")">
+                    <input type="hidden" name="Id" id="projectId" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+                    <button type="submit" class="btn btn-primary">YES</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+
+    function DeleteProject(Id)
+    {
+        $('#ProjectId').val(Id);
+        $('#projectId').val(Id);
+    }
+</script>
+

@@ -1,0 +1,302 @@
+﻿@{
+    ViewBag.Title = "Distribution Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h3 {
+        color: #2a2b6e;
+    }
+
+    #addbtn {
+        font-size: 17px;
+        color: #2a2b6e;
+    }
+
+    #box {
+        background-color: #0005a7;
+        padding: 20px;
+        width: 200px;
+        height: 60px;
+        margin-bottom: 60px;
+    }
+
+    #boxheading {
+        color: white;
+    }
+
+    p {
+        color: white;
+    }
+
+    .control-label {
+        color: #0005a7;
+    }
+
+    #expandBtn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .SheetBtn {
+        display: none;
+        color: #0005a7 !important;
+        font-size: large;
+    }
+
+    .timeSheet {
+        display: block;
+    }
+
+    @@media only screen and (max-width:400px) {
+        .timeSheet {
+            display: none;
+        }
+
+        .SheetBtn {
+            display: contents;
+        }
+    }
+</style>
+
+
+@*@using TimeCard.Helping_Classes;
+    @using TimeCard.BL;
+    @using System;
+    @using System.Collections.Generic;
+    @using System.Linq;
+    @using System.Web;
+    @using System.Web.Mvc;
+    @using System.Web.Security;
+    @using TimeCard.Models;
+    @using System.Globalization;
+    @using System.Net.Mail;
+    @using System.Net;
+    @using Newtonsoft.Json;
+    @using System.Web.WebPages;*@
+
+@{
+    //List<User> user = new UserBL().getUserList().Where(x => x.Is_Authorize == 1 && x.Role != 2).ToList();
+
+    //List<EntryTime> allentries = new UserBL().getEntryTimeList().Where(x => x.Is_Authorize == 1 && x.Is_Approved == 1 && x.ProjectUserCategory.User.Role == 0).ToList();
+    //allentries = allentries.Where(x => x.ProjectUserCategory.ProjectCategory.Project.Is_Authorize == 1 && x.ProjectUserCategory.User.Is_Authorize == 1).ToList();
+
+    //List<DistributionReportDTO> dlist = new List<DistributionReportDTO>();
+    //foreach (User i in user)
+    //{
+    //    DistributionReportDTO obj = new DistributionReportDTO()
+    //    {
+    //        Name = i.FirstName + " " + i.LastName,
+    //        VacationHour = allentries.Where(x => x.ProjectUserCategory.ProjectCategory.Project.Code == "Vacation" && x.ProjectUserCategory.User.Id == i.Id).Sum(x => x.Hour),
+    //        OverheadHour = allentries.Where(x => x.ProjectUserCategory.ProjectCategory.Project.Code == "Operations - Overhead" && x.ProjectUserCategory.User.Id == i.Id).Sum(x => x.Hour),
+    //        OtherHour = allentries.Where(x => x.ProjectUserCategory.ProjectCategory.Project.Code != "Operations - Overhead" && x.ProjectUserCategory.ProjectCategory.Project.Code != "Vacation" && x.ProjectUserCategory.User.Id == i.Id).Sum(x => x.Hour)
+    //    };
+
+    //    dlist.Add(obj);
+    //}
+
+    //ViewBag.dlist = dlist.OrderByDescending(x => x.VacationHour);
+}
+<div class="row " style=" border:5px solid #424ef4; border-radius:10px; color:white;" id="Sheet">
+    <div class="col-xs-12" style="background-color:#0005A7;">
+
+        <form action="@Url.Action("SearchDistributionReport", "Home")" method="post">
+            <div class="row">
+                <div class="col-md-2 col-lg-4" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*Start Date:</strong></label>
+                        <input type="date" id="startdate" name="Startdate" class="form-control" value="@ViewBag.sdate">
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-4" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*End Date:</strong></label>
+                        <input type="date" id="enddate" name="Enddate" class="form-control" value="@ViewBag.edate">
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-4" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Employees:</strong></label>
+                        <select class="form-control" id="employeeid" name="Employee_Id">
+                            <option value="">All</option>
+                            @{
+
+                                int a = 0;
+
+                                if (ViewBag.eid != "")
+                                {
+                                    a = Convert.ToInt32(ViewBag.eid);
+                                }
+                            }
+                            @if (ViewBag.userscount > 0)
+                            {
+                                string designation = "";
+
+                                foreach (User u in ViewBag.allusers)
+                                {
+                                    if (u.Role == 1)
+                                    {
+                                        designation = " (Manager)";
+                                    }
+                                    else
+                                    {
+                                        designation = "";
+                                    }
+                                    if (u.Id == a)
+                                    {
+                                        <option value="@u.Id" selected>@u.FirstName&nbsp;@u.LastName @designation</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@u.Id">@u.FirstName&nbsp;@u.LastName @designation</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <button type="submit" @*onclick="adminentriesSearch()"*@ class="btn btn-primary pull-right">Search</button><br />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row text-center">
+    <button href="#" class="btn btn-sm btn-primary SheetBtn" onclick="ShowTimeSheet()">Show Customer Report</button>
+</div>
+
+@{
+    double totalhours = 0;
+}
+<div class="row timeSheet">
+    <div class="col-xs-12" style="height:auto; padding:5%;">
+        <h3 class="header"><strong>Distribution Report</strong></h3><br />
+        @if (sdto.getRole() == 2)
+        {
+            <div class="clearfix">
+                <div class="pull-right tableTools-container">
+                    @*<form method="post" action="@Url.Action("DistributionReportExcel", "ExcelReport")">*@
+
+                    <input type="hidden" name="StartDate" id="excStartDate" value="@ViewBag.sdate" />
+                    <input type="hidden" name="EndDate" id="excEndDate" value="@ViewBag.edate" />
+                    <input type="hidden" name="EmployeeId" id="excEmployeeId" value="@ViewBag.eid" />
+
+                    <a type="submit" class="btn btn-primary pull-right" onclick="generatePDF()">Get Excel Sheet</a><br />
+                    @*  <button type="submit" class="btn btn-primary pull-right">Get Excel Sheet</button><br />*@
+                    @* </form>*@
+                </div>
+            </div>
+        }
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+
+        <div class="table-responsive" style="background-color:#EFF3F8;">
+            <table class="display table table-striped table-bordered table-hover" id="distributionTable">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th class="text-center">Vacation Hours</th>
+                        <th class="text-center">Operations-Overhead Hours</th>
+                        <th class="text-center">Holiday Hours</th>
+                        <th class="text-center">Other Project Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.dlist != null)
+                    {
+                        foreach (DistributionReportDTO i in ViewBag.dlist)
+                        {
+                            <tr>
+                                <td>@i.Name</td>
+                                <td class="text-center">@i.VacationHour</td>
+                                <td class="text-center">@i.OverheadHour</td>
+                                <td class="text-center">@i.HolidayHour</td>
+                                <td class="text-center">@i.OtherHour</td>
+                            </tr>
+
+                            totalhours += i.VacationHour + i.OverheadHour + i.OtherHour + i.HolidayHour;
+                        }
+                    }
+                </tbody>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="col-md-offset-9 col-md-3 col-xs-12">
+
+                <h4 style="color:white;" id="box">Total Hours : @totalhours @*<span id="totalHours"></span>*@</h4>
+            </div>
+            <br />
+        </div>
+
+    </div>
+</div>
+
+
+<!-- DonloadFile Message Modal -->
+<div class="modal fade" id="DonloadFileModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="color: black; text-align: center;"><strong>Employee Assignments</strong></h4>
+            </div>
+            <div class="modal-body">
+                <p style="color: black; text-align: center;">Your file will be downloaded in a few minutes, check your email Account for the Link!</p>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#distributionTable').DataTable();
+    });
+
+    function ShowTimeSheet() {
+        $('.timeSheet').toggle('Show');
+
+    }
+</script>
+
+<script>
+    function generatePDF() {
+        var EmployeeId = document.getElementById("excEmployeeId").value;
+        var StartDate = document.getElementById("excStartDate").value;
+        var EndDate = document.getElementById("excEndDate").value;
+        $.ajax({
+            type: 'POST',
+            url: "../ExcelReport/AsyncDistributionReportExcel",
+            data: {
+                EmployeeId: EmployeeId,
+                StartDate: StartDate,
+                EndDate: EndDate
+            },
+            //dataType: "json",
+            success: function (data) {
+                $("#DonloadFileModal").modal("show");
+            },
+            error: function () { alert('fail'); }
+        });
+    }
+</script>

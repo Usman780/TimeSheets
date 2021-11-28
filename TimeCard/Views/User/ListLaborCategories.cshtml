@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "List Labor Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+
+<style>
+    h3, h4 {
+        color: #2a2b6e;
+    }
+</style>
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header"><strong>List Labor Categories</strong></h3>
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div>
+            <table id="myTable" class="display table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @*<tbody>
+                    @foreach (LaborCategory u in ViewBag.laborcategories)
+                    {
+                        <tr>
+                            <td>@u.Name</td>
+                            <td>
+                                &nbsp; <a class="green" href="@Url.Action("EditLaborCategory","User", new { Id = u.Id })">
+                                    <i class="ace-icon fa fa-pencil bigger-160"></i>
+                                </a> &nbsp; &nbsp; &nbsp;
+                                <a class="red" onclick="DeleteLaborCategory(@u.Id)" data-toggle="modal" data-target="#deleteModal">
+                                    <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>*@
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Datatable without api binding
+        //$('#myTable').DataTable();
+
+         //Datatable with api binding
+        $('#myTable').DataTable(
+            {
+                "ajax": {
+                    "url": '@Url.Action("GetLaborCategoriesDataTable","User")',
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "Name", "name": "Name" },
+                    { "data": "Id", "name": "Id" }
+
+                ],
+
+                'columnDefs': [
+
+                    {
+                        render: function (data, type, full, meta) {
+                           return ` &nbsp; <a class="green" href="../User/EditLaborCategory?Id=` + full.Id + `"">
+                                    <i class="ace-icon fa fa-pencil bigger-160"></i>
+                                </a>
+                                `;
+                        },
+                        targets: 1
+                    }
+                ],
+                "serverSide": "true",
+
+                "processing": "true",
+                "dom": '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+                "language":
+                {
+                    "processing": "Processing... Please wait",
+                    "search": "<span>Filter:</span> _INPUT_",
+                    "searchPlaceholder": "Type to filter...",
+                    "lengthMenu": "<span>Show:</span> _MENU_",
+                    "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                }
+            });
+    });
+
+    function DeleteProject(Id)
+    {
+        $('#projectId').val(Id);
+    }
+</script>
+
+

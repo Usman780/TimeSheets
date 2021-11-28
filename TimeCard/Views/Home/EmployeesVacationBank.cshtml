@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "Employees Vacation Bank";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h3, h4 {
+        color: #2a2b6e;
+    }
+</style>
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header"><strong>List of Employee</strong></h3>
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div class="table-responsive" style="background-color:#EFF3F8;">
+            <table id="example" class="display table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone Mail</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (User user in ViewBag.AssignedEmployees)
+                    {
+                        <tr>
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@user.Email</td>
+                            <td>@user.PhoneMail</td>
+
+                            <td>
+                                &nbsp; <a class="green" href="@Url.Action("VacationBank","Home", new { User_Id = StringCipher.Base64Encode(user.Id.ToString()) })">
+    <i class="ace-icon fa fa-info-circle bigger-160"> </i> &nbsp;&nbsp;&nbsp; View Vacation Bank
+</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

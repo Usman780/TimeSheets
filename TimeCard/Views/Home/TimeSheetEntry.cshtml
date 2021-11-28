@@ -1,0 +1,471 @@
+﻿@{
+    ViewBag.Title = "TimeSheetEntry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h3 {
+        color: #2a2b6e;
+    }
+
+    #addbtn {
+        font-size: 17px;
+        color: #2a2b6e;
+    }
+
+    #box {
+        background-color: #2a2b6e;
+        padding: 20px;
+        width: 200px;
+        height: 60px;
+    }
+
+    #boxheading {
+        color: white;
+    }
+
+    p {
+        color: white;
+    }
+
+    .control-label {
+        color: #0005a7;
+    }
+
+    #expandBtn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .SheetBtn {
+        display: none;
+        color: #0005a7 !important;
+        font-size: large;
+    }
+
+    .timeSheet {
+        display: block;
+    }
+
+    @@media only screen and (max-width:400px) {
+        .timeSheet {
+            display: none;
+        }
+
+        .SheetBtn {
+            display: contents;
+        }
+    }
+</style>
+
+<div class="row" style=" border:5px solid #424ef4; border-radius:10px; color:white;" id="Sheet">
+    <div class="col-xs-12" style="background-color:#0005A7;">
+        <form class="form-horizontal" action="@Url.Action("MyReport", "Home")" method="post">
+            <div class="row">
+                <div class="col-md-offset-4 col-lg-offset-4 col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <input type="text" name="date1" class="form-control" value="@ViewBag.date1" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <input type="text" name="date2" class="form-control" value="@ViewBag.date2" readonly>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <br />
+    <div class="col-md-12">
+
+        <br />
+        <a class="SheetBtn btn btn-primary" onclick="ShowTimeSheet()">Show Customer Report</a>
+    </div>
+    <span style="font-weight:bold; color:red; margin-left:60px;">@ViewBag.Message</span>
+    <div class="col-xs-12 timeSheet" style="height:auto; padding:5%;">
+        <h3 class="header"><strong>Time Sheet Entry</strong></h3><br />
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        @{
+            double totalhours = 0;
+        }
+
+        @if (ViewBag.myentries != null)
+        {
+            foreach (EntryTime et in ViewBag.myentries)
+            {
+
+                <div id="education_fields1">
+                    <div class="row">
+                        <div class="col-sm-3 nopadding">
+                            <div class="form-group">
+                                <input type="text" class="form-control" value="@et.Date.ToLongDateString()" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 nopadding">
+                            <div class="form-group">
+                                <input type="text" class="form-control" value="@et.Hour" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 nopadding">
+                            <div class="form-group">
+                                <input type="text" class="form-control" value="@et.ProjectUserCategory.ProjectCategory.Project.Code" readonly>
+                            </div>
+                        </div>
+                        @if (et.Is_Approved == 0)
+                        {
+                            <div class="col-sm-3 nopadding">
+                                <div class="form-group">
+                                    &nbsp; <a class="green" onclick="EditTimeSheetEntry('@et.Id', '@et.Date.ToString("yyyy-MM-dd")', '@et.Hour', '@et.ProjectUserCategory.ProjectCategory.Project.Id', '@et.ProjectUserCategory.ProjectCategory.Project.Code')" data-toggle="modal" data-target="#editModal">
+                                        <i class="ace-icon fa fa-pencil bigger-160"></i>
+                                    </a> &nbsp; &nbsp; &nbsp;
+                                    <a class="red" onclick="DeleteTimeSheetEntry(@et.Id)" data-toggle="modal" data-target="#deleteModal">
+                                        <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <br />
+
+                totalhours = totalhours + et.Hour;
+            }
+        }
+
+
+        <form action="@Url.Action("SaveTimeSheetEntry", "Home")" method="post">
+            <input type="hidden" name="count" id="count" value=0 />
+            <div id="education_fields">
+                <div class="row">
+                    @{
+                        var x = DateTime.Now.Date.ToLongDateString();
+                        <input type="hidden" id="today" value="@x" />
+                    }
+                    <div class="col-sm-3 nopadding">
+                        <div class="form-group">
+                            <input type="hidden" id="datex" value="@x" />
+                            <input type="text" class="form-control dateField" id="Date" name="Date0" value="@x" onfocus="DateType('Date')" onblur="" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 nopadding">
+                        <div class="form-group">
+                            <input type="number" min="0.01" step="0.01" onkeyup="checkHours(this.value)" class="form-control" id="Hours" name="Hours0" placeholder="Hours" required>
+                            @*<span style="color:red" class="errHour0">You have exceeded the 80 hours for this period</span>*@
+                        </div>
+                    </div>
+                    <div class="col-sm-3 nopadding">
+                        <div class="form-group">
+                            <select class="form-control" id="Projects" name="Projects0" required>
+                                <option value="">Select Project</option>
+                                @{
+                                    string myprojectsCode = "";
+                                    string myprojectsId = "";
+
+                                    foreach (Project p in ViewBag.projects)
+                                    {
+                                        myprojectsCode += "," + p.Code;
+                                        myprojectsId += "," + p.Id;
+                                        //if (p.LockDate == null)
+                                        //{
+                                            <option value="@p.Id">@p.Code</option>
+                                        //}
+                                        //else
+                                        //{
+                                        //    if (p.LockDate <= DateTime.Now)
+                                        //    {
+                                        //        <option value="-1" disabled title="This timecard period has been locked. Please contact your timecard administrator.">@p.Code (Locked)</option>
+                                        //    }
+                                        //    else
+                                        //    {
+                                        //        <option value="@p.Id">@p.Code</option>
+                                        //    }
+                                        //}
+                                    }
+                                }
+                            </select>
+                            <input type="hidden" id="myprojectsCode" value="@myprojectsCode" />
+                            <input type="hidden" id="myprojectsId" value="@myprojectsId" />
+                        </div>
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="row">
+                <h3 class="header"><strong></strong></h3>
+                <div class="col-md-4 col-xs-12 text-center" style="margin-bottom: 10px;">
+                    <a id="addTimeCard" onclick="education_fields();"><i class="fa fa-plus" style="color: #0005a7;"></i><b> <span id="addbtn">Add Time Sheet Entry</span></b></a>
+
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("TimeSheetEntry", "Home")"> Cancel </a>
+                    <button class="btn btn-primary btn-sm" type="submit"> Submit </button>
+                    @*<button class="btn btn-primary btn-sm" type="submit"> Submit & Close </button>*@
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <h4 style="color:white;" id="box">Total Hours : @totalhours</h4>
+                </div>
+                <br />
+            </div>
+        </form>
+
+        <div>
+
+        </div>
+        }
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="msgModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-center"><strong class="text-danger">Alert</strong></h4>
+            </div>
+            <div class="modal-body">
+                <strong>You have exceeded the 80 hours for the period.</strong>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Edit Entry</strong></h4>
+            </div>
+            <form class="form-horizontal form-label-left" method="post" action="@Url.Action("UpdateTimeSheetEntry", "Home")">
+                <input type="hidden" name="Id" id="entryId" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Date:</label>
+                        </div>
+                        <div class="col-md-8" id="dateappend">
+                            <input type="text" class="form-control dateField" id="Date1" name="Date1" onfocus="DateType('Date')" onblur="" required>
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Hour:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="Hour" id="hourss" class="form-control" required />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Projects</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select id="leaveCode" name="Project_Id" class="form-control" required>
+                                <option value="">Select One....</option>
+                                @foreach (Project p in ViewBag.projects)
+                                {
+                                    <option value=@p.Id>@p.Code</option>
+                                    @*if (p.LockDate == null)
+                                    {
+                                        <option value="@p.Id">@p.Code</option>
+                                    }
+                                    else
+                                    {
+                                        if (p.LockDate <= DateTime.Now)
+                                        {
+                                            <option value="-1" disabled title="This timecard period has been locked. Please contact your timecard administrator.">@p.Code (Locked)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@p.Id">@p.Code</option>
+                                        }
+                                    }*@
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Warning</strong></h4>
+            </div>
+            <div class="modal-body">
+                <h5>Are you sure you want to delete this entry?</h5>
+            </div>
+            <div class="modal-footer">
+                <form class="form-horizontal form-label-left" method="post" action="@Url.Action("DeleteEntry", "Home")">
+                    <input type="hidden" name="Id" id="entryId2" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+                    <button type="submit" class="btn btn-primary">YES</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<link href="~/Content/Pagination/jquery.paginate.css" rel="stylesheet" />
+<script src="~/Content/Pagination/jquery.paginate.js"></script>
+<script type="text/javascript">
+
+    var checkin = 0;
+    function EditTimeSheetEntry(Id, Date, Hour, projid, projname) {
+
+        if (checkin == 0) {
+            
+            $('#leaveCode').prepend($('<option selected value=' + projid + '>' + projname + '</option>'));
+        }
+        $('#entryId').val(Id);
+        $('#Date1').val(Date);
+        $('#hourss').val(Hour);
+
+        checkin = 1;
+    }
+
+    function DeleteTimeSheetEntry(Id) {
+        $('#entryId2').val(Id);
+    }
+
+    var myprojectsIdOption = '<option value="">Select Project</option>';
+    $(document).ready(function () {
+        $('#addTimeCard').on('click', function () {
+            $('#timeCardList').append("<div class='row'>" +
+                "<div class='col-md-3 col-lg-3 col-sm-3 col-xs-6' style='padding: 20px;'>" +
+                "<div class='form-group'> <label class='control-label'><strong>*Start Date:</strong></label>" +
+                "<input type='date' name='startdate' class='form-control' placeholder='Enter Date' required></div></div>" +
+                "<div class='col-md-3 col-lg-3 col-sm-3 col-xs-6' style='padding: 20px;'>" +
+                "<div class='form-group'>" +
+                "<label class='control-label'><strong>Type:</strong></label>" +
+                "<input type='text' name='startdate' class='form-control' placeholder='Enter Type' required>" +
+                "</div></div>" +
+                "<div class='col-md-3 col-lg-3 col-sm-3 col-xs-6' style='padding: 20px;'>" +
+                "<div class='form-group'>" +
+                "<label class='control-label'><strong>Hours:</strong></label>" +
+                "<input type='text' name='startdate' placeholder='Enter Hours' class='form-control' required>" +
+                "<span style='color:red'>You have exceeded the 80 hours for this period</span>" +
+                "</div></div>" +
+                "<div class='col-md-3 col-lg-3 col-sm-3 col-xs-6' style='padding: 20px;'> <div class='form-group'>" +
+                "<label class='control-label'><strong>Projects:</strong></label>" +
+                "<input type='text' name='startdate' class='form-control' placeholder='Enter Project' required>" +
+                "</div> </div>" +
+                "</div>");
+        })
+        var myprojectsId;
+        var myprojectsCode;
+
+
+
+        myprojectsId = document.getElementById('myprojectsId').value.split(",");
+        myprojectsCode = document.getElementById('myprojectsCode').value.split(",");
+
+        for (var i = 1; i < myprojectsId.length; i++) {
+            myprojectsIdOption += '<option value="' + myprojectsId[i] + '">' + myprojectsCode[i] + '</option>';
+        }
+    })
+    function DeleteEntry(Id) {
+        $('#entryId').val(Id);
+    }
+    var room = 1;
+
+    function education_fields() {
+
+        var objTo = document.getElementById('education_fields')
+        var divtest = document.createElement("div");
+        divtest.setAttribute("class", "form-group removeclass" + room);
+        var rdiv = 'removeclass' + room;
+
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        today = mm + '/' + dd + '/' + yyyy;
+        var value = document.getElementById('today').value;
+        var newdate = '<input type="text" class="form-control dateField" id="Date' + room + '" name="Date' + room + '" value="' + value + '" onfocus="DateType()" onblur="TextType()" required>';
+
+        divtest.innerHTML = '<div class="row"><div class="col-sm-3 nopadding"><div class="form-group">' + newdate + '</div></div><div class="col-sm-3 nopadding"><div class="form-group">' +
+            '<input type="number" min="0.01" step="0.01" onkeyup="checkHours(this.value)" class="form-control" id="Hours" name="Hours' + room + '" value="" placeholder="Hours"></div></div><div class="col-sm-3 nopadding"><div class="form-group"><div class="input-group"> <select class="form-control" id="Projects" name="Projects' + room + '">' + myprojectsIdOption + '</select><div class="input-group-btn"> <button class="btn btn-danger" id="expandBtn" type="button" onclick="remove_education_fields(' + room + ');"> <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> </button></div></div></div></div><div class="clear"></div></div>';
+
+        objTo.appendChild(divtest);
+
+        document.getElementById('count').value = room;
+
+        room++;
+    }
+
+    function DateType() {
+        $(".dateField").attr('type', 'date');
+        // $(".dateappend").append('<input type="text" class="form-control dateField" id="Date1" name="Date1" onfocus="DateType('+Date+')" onblur="" required>');
+    }
+
+    function TextType(Id) {
+
+        var x = $("#Id").val;
+        if (x == "") {
+            $(".dateField").attr('type', 'text');
+            $(".dateField").attr('placeholder', 'Enter Date');
+        }
+    }
+    function remove_education_fields(rid) {
+        $('.removeclass' + rid).remove();
+    }
+
+    $('#education_fields').paginate();
+
+    function ShowTimeSheet() {
+        //$('.SheetBtn').hide();
+        $('.timeSheet').toggle('Show');
+
+    }
+
+
+</script>
+
+<script>
+    function checkHours(hours) {
+        if (hours > 80) {
+            $('#msgModal').modal('toggle');
+        }
+    }
+</script>

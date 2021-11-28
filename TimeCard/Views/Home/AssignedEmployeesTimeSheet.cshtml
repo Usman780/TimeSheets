@@ -1,0 +1,705 @@
+﻿@{
+    ViewBag.Title = "Employees TimeSheet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h3 {
+        color: #2a2b6e;
+    }
+
+    #addbtn {
+        font-size: 17px;
+        color: #2a2b6e;
+    }
+
+    #box {
+        background-color: #0005a7;
+        padding: 20px;
+        width: 200px;
+        height: 60px;
+        margin-bottom: 60px;
+    }
+
+    #boxheading {
+        color: white;
+    }
+
+    p {
+        color: white;
+    }
+
+    .control-label {
+        color: #0005a7;
+    }
+
+    #expandBtn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .SheetBtn {
+        display: none;
+        color: #0005a7 !important;
+        font-size: large;
+    }
+
+    .timeSheet {
+        display: block;
+    }
+
+    @@media only screen and (max-width:400px) {
+        .timeSheet {
+            display: none;
+        }
+
+        .SheetBtn {
+            display: contents;
+        }
+    }
+</style>
+
+<div class="row " style=" border:5px solid #424ef4; border-radius:10px; color:white;" id="Sheet">
+    <div class="col-xs-12" style="background-color:#0005A7;">
+        @if (sdto.getRole() == 1)
+        {
+        <form action="@Url.Action("SearchAssignedEmployeesTimeSheet","Home")" method="post">
+            <div class="row">
+                <div class="col-md-offset-1 col-lg-offset-1 col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*Start Date:</strong></label>
+                        <input type="date" id="startdate" name="startdate" class="form-control" value="@ViewBag.sdate">
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*End Date:</strong></label>
+                        <input type="date" id="enddate" name="enddate" class="form-control" value="@ViewBag.edate">
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Employees:</strong></label>
+                        <select class="form-control" id="employeeid" name="Employee_Id">
+                            <option value="">All</option>
+                            @{
+                                int a = 0;
+
+                                if (ViewBag.eid != "")
+                                {
+                                    a = Convert.ToInt32(ViewBag.eid);
+                                }
+                            }
+                            @if (ViewBag.userscount > 0)
+                            {
+                                foreach (User u in ViewBag.allusers)
+                                {
+                                    if (u.Id == a)
+                                    {
+                                        <option value="@u.Id" selected>@u.FirstName&nbsp;@u.LastName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@u.Id">@u.FirstName&nbsp;@u.LastName</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>Project:</strong></label>
+                        <select class="form-control" onchange="search()" id="projectid" name="Project_Id">
+                            <option value="">All</option>
+                            @{
+                                int b = 0;
+
+                                if (ViewBag.pid != "")
+                                {
+                                    b = Convert.ToInt32(ViewBag.pid);
+                                }
+                            }
+                            @foreach (Project p in ViewBag.projects)
+                            {
+                                if (p.Id == b)
+                                {
+                                    <option value="@p.Id" selected>@p.Code</option>
+                                }
+                                else
+                                {
+                                    <option value="@p.Id">@p.Code</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>Status:</strong></label>
+                        <select class="form-control" id="status" name="Status">
+                            <option value="">All</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <button @*onclick="entriesSearch()"*@ type="submit" class="btn btn-primary pull-right">Search</button><br />
+                    </div>
+                </div>
+            </div>
+        </form>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*Start Date:</strong></label>
+                        <input type="date" id="startdate" name="startdate" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*End Date:</strong></label>
+                        <input type="date" id="enddate" name="enddate" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;padding-top:20px;">
+                    <div class="form-group">
+                        <label><strong>Employees:</strong></label>
+                        <select class="form-control" id="employeeid" name="Employee_Id">
+                            <option value="">All</option>
+                            @if (ViewBag.userscount > 0)
+                            {
+                                foreach (User u in ViewBag.allusers)
+                                {
+                                    <option value="@u.Id">@u.FirstName&nbsp;@u.LastName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>Project:</strong></label>
+                        <select class="form-control" onchange="search()" id="projectid" name="Project_Id">
+                            <option value="">All</option>
+                            @foreach (Project p in ViewBag.projects)
+                            {
+                                <option value="@p.Id">@p.Code</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>LCAT:</strong></label>
+                        <select class="form-control" id="laborcategories" name="LaborCategory_Id">
+                            <option value="">All</option>
+                            @if (ViewBag.laborcategoriescount > 0)
+                            {
+                                foreach (LaborCategory lc in ViewBag.laborcategories)
+                                {
+                                    <option value="@lc.Id">@lc.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-lg-2" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>Status:</strong></label>
+                        <select class="form-control" id="status" name="Status">
+                            <option value="">All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <button onclick="adminentriesSearch()" class="btn btn-primary pull-right">Search</button><br />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="row text-center">
+    <button href="#" class="btn btn-sm btn-primary SheetBtn" onclick="ShowTimeSheet()">Show Customer Report</button>
+</div>
+
+@{
+    double totalhours = 0;
+}
+<div class="row timeSheet">
+    <div class="col-xs-12" style="height:auto; padding:5%;">
+        <h3 class="header"><strong>Time Sheet Entry</strong></h3><br />
+        @if (sdto.getRole() == 2)
+        {
+            <div class="clearfix">
+                <div class="pull-right tableTools-container">
+                    @*<form method="post" action="@Url.Action("EntriesExcelSheet", "ExcelReport")">*@
+                        <input type="hidden" name="ProjectId" id="ProjectId" />
+                        <input type="hidden" name="StartDate" id="StartDate" />
+                        <input type="hidden" name="EndDate" id="EndDate" />
+                        <input type="hidden" name="EmployeeId" id="EmployeeId" />
+                        <input type="hidden" name="LaborCategories" id="LaborCategories" />
+                        <input type="hidden" name="EStatus" id="EStatus" />
+
+                        @*<button type="submit" class="btn btn-primary pull-right">Get Excel Sheet</button><br />*@
+                        <a type="submit" class="btn btn-primary pull-right" onclick="generatePDF()">Get Excel Sheet</a><br />
+                    @*</form>*@
+                </div>
+            </div>
+        }
+            <!-- div.table-responsive -->
+            <!-- div.dataTables_borderWrap -->
+            <div class="table-responsive" style="background-color:#EFF3F8;">
+                <table id="myTable" class="display table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            @if (sdto.getRole() == 2)
+                            {
+                                <th>LCAT</th>
+                            }
+                            <th>Hours</th>
+                            <th>Project</th>
+                            <th>Status</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (EntryTime e in ViewBag.allEntries)
+                        {
+                            <tr>
+                                <td>@e.Date.ToString("MM/dd/yyyy")</td>
+                                <td>@e.ProjectUserCategory.User.FirstName&nbsp;@e.ProjectUserCategory.User.LastName</td>
+                                @if (sdto.getRole() == 2)
+                                {
+                                    <td>@e.ProjectUserCategory.ProjectCategory.LaborCategory.Name</td>
+                                }
+                                <td>@e.Hour</td>
+                                <td>@e.ProjectUserCategory.ProjectCategory.Project.Code</td>
+                                @if (e.Is_Approved == 1)
+                                {
+                                    <td>
+                                        Accepted&nbsp;&nbsp;
+                                        @*<a class="red" onclick="DeleteEntry(@e.Id)" data-toggle="modal" data-target="#deleteModal">
+                                            <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                                        </a>commented*@
+                                    </td>
+                                }
+                                else if (e.Is_Approved == 2)
+                                {
+                                    <td>
+                                        Rejected &nbsp; <a onclick="ReasonEntry('@e.RejectReason')" data-toggle="modal" data-target="#reasonModal"><strong>Reason</strong></a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        Pending
+                                    </td>
+                                }
+                            </tr>
+                            totalhours = totalhours + e.Hour;
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <div class="col-md-offset-9 col-md-3 col-xs-12">
+                    <h4 style="color:white;" id="box">Total Hours : @totalhours @*<span id="totalHours"></span>*@</h4>
+                </div>
+                <br />
+            </div>
+        </div>
+</div>
+
+<!-- Reason Modal -->
+<div class="modal fade" id="reasonModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Reason</strong></h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="reasonEntry" style="color: black;" readonly />
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- DonloadFile Message Modal -->
+<div class="modal fade" id="DonloadFileModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="color: black; text-align: center;"><strong>Employee Assignments</strong></h4>
+            </div>
+            <div class="modal-body">
+                <p style="color: black; text-align: center;">Your file will be downloaded in a few minutes, check your email Account for the Link!</p>
+            </div>
+            <div class="modal-footer">
+               
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Delete Reason</strong></h4>
+            </div>
+            <form class="form-horizontal form-label-left" method="post" action="@Url.Action("DeleteTimeSheetEntry", "Home")">
+                <input type="hidden" name="Id" id="deleteEntryId" />
+                <div class="modal-body">
+                    <textarea class="form-control" rows="4" name="deletereason" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        //Datatable without api binding
+        $('#myTable').DataTable();
+
+        // $('#example').DataTable().clear();
+        // $('#example').DataTable().destroy();
+        //Datatable with api binding
+        @*$('#myTable').DataTable(
+            {
+                "ajax": {
+                    "url": '@Url.Action("GetTimeSheetDataTable","Home")',
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "Date", "name": "Date" },
+                    { "data": "Name", "name": "Name" },
+                    { "data": "LCAT", "name": "LCAT" },
+                    { "data": "Hour", "name": "Hour" },
+                    { "data": "Project", "name": "Project" }
+                    //{ "data": "Status", "name": "Status" }
+
+                ],
+                'columnDefs': [
+
+                    {
+                        render: function (data, type, full, meta) {
+
+                            if (full.TotalHours != 0) {
+                                $('#totalHours').text(full.TotalHours);
+                            }
+
+                            return null;
+                        },
+                        targets: 5
+                    }
+                ],
+                "serverSide": "true",
+
+                "processing": "true",
+                "dom": '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+                "language":
+                {
+                    "processing": "Processing... Please wait",
+                    "search": "<span>Filter:</span> _INPUT_",
+                    "searchPlaceholder": "Type to filter...",
+                    "lengthMenu": "<span>Show:</span> _MENU_",
+                    "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                }
+            });*@
+    });
+
+    //Datatable with api binding
+    //$('#myTable').DataTable(
+    //    {
+    //        "ajax": {
+    //            "url": '../Home/GetTimeSheetDataTable',
+    //            "type": "GET",
+    //            "datatype": "json"
+    //        },
+    //        "columns": [
+    //            { "data": "Date", "name": "Date" },
+    //            { "data": "Name", "name": "LCAT" },
+    //            { "data": "LCAT", "name": "LCAT" },
+    //            { "data": "Hour", "name": "Hour" },
+    //            { "data": "Project", "name": "Project" },
+    //            { "data": "Status", "name": "Status" }
+    //        ],
+
+    //        'columnDefs': [
+
+    //            {
+    //                render: function (data, type, full, meta) {
+
+    //                    if (full.TotalHours != null) {
+    //                        $('#totalHours').text(full.TotalHours);
+    //                    }
+
+    //                    return null;
+    //                },
+    //                targets: 6
+    //            }
+    //        ],
+    //        "serverSide": "true",
+
+    //        "processing": "true",
+    //        "dom": '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+    //        "language":
+    //        {
+    //            "processing": "Processing... Please wait",
+    //            "search": "<span>Filter:</span> _INPUT_",
+    //            "searchPlaceholder": "Type to filter...",
+    //            "lengthMenu": "<span>Show:</span> _MENU_",
+    //            "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+    //        }
+    //    });
+
+    function ReasonEntry(Reason) {
+        $('#reasonEntry').val(Reason);
+    }
+
+    function DeleteEntry(Id)
+    {
+        $('#deleteEntryId').val(Id);
+    }
+
+    //Entries Search
+    function entriesSearch() {
+
+        var projectid = document.getElementById("projectid").value;
+        var startdate = document.getElementById("startdate").value;
+        var enddate = document.getElementById("enddate").value;
+        var employeeid = document.getElementById("employeeid").value;
+        //var laborcategories = document.getElementById("laborcategories").value;
+        var status = document.getElementById("status").value;
+
+        $.ajax({
+            dataType: "json",
+            type: "GET",
+            url: '@Url.Action("AssignedEmployeesReport", "Home")',
+            contentType: "application/json; charset=utf-8",
+            data: { startdate: startdate, enddate: enddate, Project_Id: projectid, Employee_Id: employeeid, Status: status},
+            success: function (response) {
+
+                document.getElementById("ProjectId").value = projectid;
+                document.getElementById("StartDate").value = startdate;
+                document.getElementById("EndDate").value = enddate;
+                document.getElementById("EmployeeId").value = employeeid;
+                document.getElementById("EStatus").value = status;
+
+
+                $("#myTable > tbody").html("");
+                var i = 0;
+                var totalhours = 0;
+                $.each(response, function () {
+
+                    if (response[i].Status == "Rejected")
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Name + '</td><td>' + response[i].LCAT +
+                            '</td><td>' + response[i].Hours + '</td><td>' + response[i].Project + '</td><td>' + response[i].Status + '<a onclick="' + ReasonEntry(response[i].RejectReason) + '" data-toggle="modal" data-target="#reasonModal"><strong>&nbsp; Reason</strong></a></td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = totalhours + parseInt(response[i].Hours);
+                        i++;
+                    }
+                    else
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Name + '</td><td>' + response[i].LCAT + '</td><td>'
+                            + response[i].Hours + '</td><td>' + response[i].Project + '</td><td>' + response[i].Status + '</td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = totalhours + parseInt(response[i].Hours);
+                        i++;
+                    }
+                });
+                $("#box").html("");
+                $("#box").html("Total Hours : " + totalhours);
+            },
+            error: function (response) {
+                alert('Error');
+            }
+
+        });
+
+    }
+
+    //Admin Entries Search
+    function adminentriesSearch() {
+
+        var projectid = document.getElementById("projectid").value;
+        var startdate = document.getElementById("startdate").value;
+        var enddate = document.getElementById("enddate").value;
+        var employeeid = document.getElementById("employeeid").value;
+        var laborcategories = document.getElementById("laborcategories").value;
+        var status = document.getElementById("status").value;
+
+        $.ajax({
+            dataType: "json",
+            type: "GET",
+            url: '@Url.Action("AdminEmployeesReport", "Home")',
+            contentType: "application/json; charset=utf-8",
+            data: { startdate: startdate, enddate: enddate, Project_Id: projectid, Employee_Id: employeeid, LaborCategory_Id: laborcategories, Status: status},
+            success: function (response) {
+
+                document.getElementById("ProjectId").value = projectid;
+                document.getElementById("StartDate").value = startdate;
+                document.getElementById("EndDate").value = enddate;
+                document.getElementById("EmployeeId").value = employeeid;
+                document.getElementById("LaborCategories").value = laborcategories;
+                document.getElementById("EStatus").value = status;
+
+                $("#myTable > tbody").html("");
+                var i = 0;
+                var totalhours = 0.0;
+                $.each(response, function () {
+
+                    if (response[i].Status == "Rejected")
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Name + '</td><td>' + response[i].LCAT +
+                            '</td><td>' + response[i].Hours + '</td><td>' + response[i].Project + '</td><td>' + response[i].Status + '<a onclick="' + ReasonEntry(response[i].RejectReason) + '" data-toggle="modal" data-target="#reasonModal"><strong>&nbsp; Reason</strong></a></td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = totalhours + parseFloat(response[i].Hours);
+                        i++;
+                    }
+                    else
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Name + '</td><td>' + response[i].LCAT + '</td><td>'
+                            + response[i].Hours + '</td><td>' + response[i].Project + '</td><td>' + response[i].Status + '</td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = totalhours + parseFloat(response[i].Hours);
+                        i++;
+                    }
+                });
+                $("#box").html("");
+                $("#box").html("Total Hours : " + parseFloat(totalhours));
+            },
+            error: function (response) {
+                alert('Error');
+            }
+
+        });
+
+    }
+
+    //Labor Categories
+    function search() {
+        var projectid;
+
+        projectid = document.getElementById("projectid").value;
+
+        $.ajax({
+            dataType: "json",
+            type: "GET",
+            url: '@Url.Action("LaborCategoriesSearch", "Home")',
+            contentType: "application/json; charset=utf-8",
+            data: { projectId: projectid },
+            success: function (response) {
+                $("#laborcategories").html("");
+                var trobject = '<option value="">All</option>';
+                $('#laborcategories').append(trobject);
+                var i = 0;
+                $.each(response, function () {
+
+                    trobject = '<option value="">' + response[i].Name + '</option>';
+
+                    $('#laborcategories').append(trobject);
+                    i++;
+                });
+                $("#box").html("");
+                $("#box").html("Total Hours : " + totalhours);
+            },
+            error: function (response) {
+                alert('Error');
+            }
+
+        });
+
+    }
+
+    function ShowTimeSheet() {
+        $('.timeSheet').toggle('Show');
+
+    }
+
+</script>
+
+<script>
+    function generatePDF()
+    {
+        var ProjectId = document.getElementById("ProjectId").value;
+        var StartDate = document.getElementById("StartDate").value;
+        var EndDate = document.getElementById("EndDate").value;
+        var EmployeeId = document.getElementById("EmployeeId").value;
+        var LaborCategories = document.getElementById("LaborCategories").value;
+        var EStatus = document.getElementById("EStatus").value;
+            $.ajax({
+                type: 'POST',
+                url: "../ExcelReport/AsyncEntriesExcelSheet",
+                data: {
+                    ProjectId: ProjectId,
+                    StartDate: StartDate,
+                    EndDate: EndDate,
+                    EmployeeId: EmployeeId,
+                    LaborCategories: LaborCategories,
+                    EStatus: EStatus
+                },
+                //dataType: "json",
+                success: function (data) {
+                    //alert("Your file will be downloaded in a few minutes, check your email Account for the Link!");
+                    $("#DonloadFileModal").modal("show");
+                },
+                error: function () { alert('fail'); }
+            });
+    }
+</script>

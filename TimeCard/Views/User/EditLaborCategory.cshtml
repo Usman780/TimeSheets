@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Edit Labor Category";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+<style>
+    h4 {
+        color: #2a2b6e;
+    }
+</style>
+<br /><br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Edit Labor Category</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("UpdateLaborCategory", "User")">
+                        <input type="hidden" name="Id" value="@ViewBag.p.Id" />
+                        <div>
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="Name" value="@ViewBag.p.Name" required />
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+

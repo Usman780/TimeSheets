@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "Edit Annual Vacation Time";
+
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+<style>
+    h4 {
+        color: #2a2b6e;
+    }
+</style>
+<br /><br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Edit Annual Vacation Accrual</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("UpdateAnnualVacationTime", "Home")">
+                        <input type="hidden" name="Id" value="@ViewBag.vb.Id" />
+                        <div>
+                            <label>Name</label>
+                            <input type="text" readonly class="form-control" name="Name" value="@ViewBag.vb.User.FirstName @ViewBag.vb.User.LastName" required />
+                        </div>
+                        <div>
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="VacationHoursPerYear" value="@ViewBag.vb.VacationHoursPerYear" required />
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+
+

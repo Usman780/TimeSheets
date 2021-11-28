@@ -1,0 +1,54 @@
+﻿
+
+@{
+    ViewBag.Title = "ManuallyAddVacationHours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@using TimeCard.BL
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<br />
+@if (ViewBag.msg != "")
+{
+    <center><h2><strong>@ViewBag.msg</strong></h2></center>
+    <br />
+}
+
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Adjust Current Available Vacation Hours</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("PostManuallyAddVacationHours", "Home")">
+                        <div>
+                            <input name="User_Id" value="@ViewBag.UserId" hidden />
+                            <label>User</label>
+                            <input class="form-control" type="text" value="@ViewBag.User" readonly />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Total Current Hours Available</label>
+                            <input class="form-control" type="text" value="@ViewBag.accural.ToString("0.00")" name="Accural" readonly />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Enter Hours to Add/Remove (Use - in front of number to remove hours)</label>
+                            <input type="number" class="form-control" name="MHours" required />
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>

@@ -1,0 +1,240 @@
+﻿
+@{
+    ViewBag.Title = "AssignLabourCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<br />
+<br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Assign Labour Category</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("SaveProjectLabourCategory", "User")">
+
+                        <input type="hidden" name="Project_Id" value=@ViewBag.p.Id />
+
+                        <div>
+                            <label>Labor Category</label>
+                            <select class="form-control" name="LaborCategory_Id" required>
+                                <option value="">Select One</option>
+                                @foreach (LaborCategory p in ViewBag.laborcategories)
+                                {
+                                    <option value=@p.Id>@p.Name</option>
+                                }
+                            </select>
+
+                            <label>Labor Category Cost</label>
+                            <input type="text" class="form-control" required name="Cost" />
+
+                        </div>
+                        <br />
+
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p>
+                <span style="color: red;">*</span> If you want to add a new Labor category in system and also want that category to be assigned to this project then click on the link below.
+                This will add a new Labor category into the system and will also assign it to this project automatically.
+                <span style="font-size: 14px;"><a data-toggle="modal" data-target="#addModal">&nbsp;<strong>+New Labor Category</strong></a></span>
+            </p>
+
+        </div>
+        <br />
+    </div><!-- /.span -->
+</div>
+<br />
+<div class="row">
+    <div class="col-md-9">
+
+    </div>
+    <div class="pull-left">
+
+    </div>
+</div>
+<br />
+<br />
+<center><h2><strong>@ViewBag.message</strong></h2></center>
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header smaller lighter blue"><strong>Assigned Labor Categories</strong></h3>
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div>
+            <table id="myTable" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Project Code</th>
+                        <th>Labor Category</th>
+                        <th>Labor Category Cost</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (ProjectCategory u in ViewBag.projectlaborcategories)
+                    {
+                        <tr>
+                            <td>@u.Project.Code</td>
+                            <td>@u.LaborCategory.Name</td>
+                            <td>
+                                @if (u.Cost == "" || u.Cost == null)
+                                {
+                                    <span>0</span>
+                                }
+                                else
+                                {
+                                    <span>@u.Cost</span>
+                                }
+                                <a class="green pull-right" onclick="EditProjectCategoryCost('@u.Id','@u.Cost', '@u.Project.Code', '@u.LaborCategory.Name')" data-toggle="modal" data-target="#updateModal">
+                                    <i class="ace-icon fa fa-pencil bigger-160"></i>
+                                </a>
+                            </td>
+                            <td>
+                                &nbsp;
+                                <a class="red" onclick="DeleteProjectCategory(@u.Id)" data-toggle="modal" data-target="#deleteModal">
+                                    <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <form class="form-horizontal form-label-left" method="post" action="@Url.Action("SaveUpdateProjectLabourCategory", "User")">
+                <input type="hidden" name="Project_Id" value=@ViewBag.p.Id />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><strong>Add & Assign Labor Category</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <br />
+                    <div>
+                        <label>Name</label>
+                        <input type="text" required name="Name" class="form-control" />
+
+                        <label>Cost</label>
+                        <input type="number" step="0.01" required name="Cost" class="form-control" />
+                    </div>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Update Modal -->
+<div class="modal fade" id="updateModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <form class="form-horizontal form-label-left" method="post" action="@Url.Action("UpdateProjectCategoryCost", "User")">
+                <input type="hidden" name="Project_Id" value=@ViewBag.p.Id />
+                <input type="hidden" name="LCategory_Id" id="LCId" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><strong>Update Labour Category Cost</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <br />
+                    <div>
+                        <p id="pCode"></p>
+                        <p id="lCategory"></p>
+
+                        <label>Update Cost</label>
+                        <input type="number" step="0.01" required name="Cost" id="oldcost" class="form-control" />
+                    </div>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Warning</strong></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this project and labor category association?</p>
+            </div>
+            <div class="modal-footer">
+                <form class="form-horizontal form-label-left" method="post" action="@Url.Action("ToggleProjectCategory", "User")">
+                    <input type="hidden" name="Id" id="projectcategoryId" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+                    <button type="submit" class="btn btn-primary">YES</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+
+    function EditProjectCategoryCost(Id, Cost, pcode, lcat) {
+        document.getElementById("pCode").innerHTML = "<b>Project Code = </b>" + pcode;
+        document.getElementById("lCategory").innerHTML = "<b>Labour Category = </b>" + lcat;
+        $('#LCId').val(Id);
+        if (Cost == "")
+        {
+            $('#oldcost').val(0);
+        }
+        else
+        { 
+            $('#oldcost').val(Cost);
+        }
+    }
+
+    function DeleteProjectCategory(Id) {
+        $('#projectcategoryId').val(Id);
+    }
+</script>
+

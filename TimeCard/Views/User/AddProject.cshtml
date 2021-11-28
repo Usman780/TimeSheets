@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Add Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    h4 {
+        color: #2a2b6e;
+    }
+</style>
+<br /><br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Add Project</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("SaveProject", "User")">
+                        <div>
+                            <label>Code</label>
+                            <input type="text" class="form-control" name="Code" id="code" onchange="ValidateCode()" required />
+                            <label id="msg"></label>
+                        </div>
+                        <br />
+
+                        <div>
+                            <label>Budget</label>
+                            <input type="number" step="0.01" class="form-control" name="Budget" id="budget" required />
+                            <label id="msg"></label>
+                        </div>
+                        <br />
+
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+<script>
+
+    function ValidateCode() {
+        var code = document.getElementById('code').value;
+        $.ajax({
+            dataType: "json",
+            type: "POST",
+            url: '../User/validateCode',
+            data: { Code: code },
+            //traditional: true,
+            success: function (response) {
+                if (response == 0) {
+                    $("#msg").html(" Code already exist, please try another one!");
+                    $("#msg").addClass("text-danger");
+                    $(':input[type="submit"]').prop('disabled', true);
+                } else {
+                    $("#msg").removeClass("text-danger");
+                    $("#msg").addClass("text-success");
+                    $("#msg").html(" Congrates, Code is available.");
+                    $(':input[type="submit"]').prop('disabled', false);
+                    return trim(this);
+                }
+            },
+            error: function (response) { alert('Error'); }
+
+        });
+    }
+
+    $("#email").on({
+        keydown: function (e) {
+            if (e.which === 32)
+                return false;
+        },
+        change: function () {
+            this.value = this.value.replace(/\s/g, "");
+        }
+    });
+
+</script>
+
+

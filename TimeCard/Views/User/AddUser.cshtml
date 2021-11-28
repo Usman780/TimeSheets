@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewBag.Title = "Add User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@model IEnumerable<TimeCard.Models.User>
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h4 {
+        color: #2a2b6e;
+    }
+</style>
+
+<br /><br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Add User</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("SaveUser", "User")">
+                        <div>
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="FirstName" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="LastName" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="Email" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Password</label>
+                            <input type="text" class="form-control" name="Password" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Phone</label>
+                            <input type="text" class="form-control" name="Phone" />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Carrier</label><br />
+                            <select class="form-control" name="Carrier_Id">
+                                <option value="">Select One</option>
+                                @foreach (Carrier c in ViewBag.carriers)
+                                {
+                                    <option value="@c.Id">@c.Name</option>
+                                }
+
+                            </select>
+                        </div>
+                        <br />
+                        <div>
+                            <label>Role</label><br />
+                            <input type="radio" name="Role" value=0 checked onclick="enable1099()"> Employee<br />
+                            <input type="radio" name="Role" value=1 onclick="disable1099()"> Manager<br />
+                        </div>
+                        <br />
+
+                        <div>
+                            <input type="checkbox" name="IsChecked" value="1099" id="chk1099"> <span>1099</span><br />
+                        </div>
+                        <br />
+
+                        <div>
+                            <label>Assign Manager</label>
+                            <select class="form-control" name="User_Id">
+                                <option value="">Select One</option>
+                                @foreach (User u in Model.ToList())
+                                {
+                                    <option value=@u.Id>@u.FirstName&nbsp;@u.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+
+
+<script>
+
+    function disable1099() {
+        $('#chk1099').attr("disabled", true);
+        $('#chk1099').val("");
+
+    }
+
+    function enable1099() {
+        $('#chk1099').attr("disabled", false);
+        $('#chk1099').val("1099");
+    }
+</script>
+
+

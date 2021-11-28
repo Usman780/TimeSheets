@@ -1,0 +1,157 @@
+﻿@{
+    ViewBag.Title = "PendingTimeCards";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h3 {
+        color: #2a2b6e;
+    }
+
+    #addbtn {
+        font-size: 17px;
+        color: #2a2b6e;
+    }
+
+    #box {
+        background-color: #2a2b6e;
+        padding: 20px;
+        width: 200px;
+        height: 250px;
+        margin-bottom: 60px;
+    }
+
+    #boxheading {
+        color: white;
+    }
+
+    p {
+        color: white;
+    }
+
+    .control-label {
+        color: #2a2b6e;
+    }
+
+    #expandBtn {
+        width: 35px;
+        height: 35px;
+    }
+</style>
+
+
+
+<div class="row">
+    <b class="text-danger">
+        @ViewBag.Message
+    </b>
+    <div class="col-xs-12" style="height:auto; padding:5%;">
+        <h3 class="header"><strong>Pending Time Sheet Entry</strong></h3><br />
+        <div class="clearfix">
+            <div class="pull-right tableTools-container">
+                @if (ViewBag.pendingentriescount > 0)
+                {
+                    <a class="btn btn-primary btn-lg" id="acceptAllBtn" href="#" onclick="disableBtnFunction()">Accept All <i id="btnSpiner" class="fa fa-spinner" style="display:none;"></i></a>
+                }
+                else
+                {
+                    <button class="btn btn-primary disabled btn-lg" href="#">Accept All</button>
+                }
+            </div>
+        </div>
+                
+
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div>
+            <table id="myTable" class="display table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Hours</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.pendingentriescount > 0)
+                    {
+                        foreach (EntryTime e in ViewBag.pendingentries)
+                        {
+                            <tr>
+                                <td>@e.Date.ToString("MM/dd/yyyy")</td>
+                                <td>@e.ProjectUserCategory.User.FirstName&nbsp;@e.ProjectUserCategory.User.LastName</td>
+                                <td>@e.Hour</td>
+                                <td>@e.ProjectUserCategory.ProjectCategory.Project.Code</td>
+                                <td>
+                                    <a class="btn btn-success btn-sm" href="@Url.Action("ToggleTimeCard","Home", new { Id = e.Id, option = 1 })">Accept</a>&nbsp;&nbsp;<a class="btn btn-danger btn-sm" onclick="reasonEntry(@e.Id)" data-toggle="modal" data-target="#reasonModal">Reject</a>
+
+                                </td>
+                            </tr>
+                        }
+                        @*for (int i = 0; i < 2500; i++)
+                        {
+                            foreach (EntryTime e in ViewBag.pendingentries)
+                            {
+                                <tr>
+                                    <td>@e.Date.ToString("MM/dd/yyyy")</td>
+                                    <td>@e.ProjectUserCategory.User.FirstName&nbsp;@e.ProjectUserCategory.User.LastName</td>
+                                    <td>@e.Hour</td>
+                                    <td>@e.ProjectUserCategory.ProjectCategory.Project.Code</td>
+                                    <td>
+                                        <a class="btn btn-success btn-sm" href="@Url.Action("ToggleTimeCard","Home", new { Id = e.Id, option = 1 })">Accept</a>&nbsp;&nbsp;<a class="btn btn-danger btn-sm" onclick="reasonEntry(@e.Id)" data-toggle="modal" data-target="#reasonModal">Reject</a>
+
+                                    </td>
+                                </tr>
+                            }
+                            i++;
+                        }*@
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="reasonModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Reason</strong></h4>
+            </div>
+            <form class="form-horizontal form-label-left" method="post" action="@Url.Action("ToggleTimeCard", "Home")">
+                <input type="hidden" name="Id" id="entryId" />
+                <input type="hidden" name="option" value=2 />
+                <div class="modal-body">
+                    <textarea class="form-control" rows="4" name="reason"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function reasonEntry(Id) {
+        $('#entryId').val(Id);
+    }
+</script>
+
+<script>
+    function disableBtnFunction()
+    {
+        document.getElementById("acceptAllBtn").className = "btn btn-primary disabled btn-lg";
+        document.getElementById("btnSpiner").style.display = "inline";
+        document.getElementById("acceptAllBtn").href = "@Url.Action("ToggleTimeCard", "Home", new { Id = 0, option = 100 })";
+    }
+</script>

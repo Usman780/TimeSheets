@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "Edit User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@using TimeCard.BL
+@model TimeCard.Models.User
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h4 {
+        color: #2a2b6e;
+    }
+</style>
+<br /><br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Edit User</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("UpdateUser", "User")">
+                        <input type="hidden" name="Id" value="@ViewBag.employee.Id" />
+                        <div>
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="FirstName" value="@ViewBag.employee.FirstName" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="LastName" value="@ViewBag.employee.LastName" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="Email" value="@ViewBag.employee.Email" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Password</label>
+                            <input type="text" class="form-control" name="Password" value="@ViewBag.employee.Password" required />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Phone</label>
+                            <input type="text" class="form-control" name="Phone" value="@ViewBag.employee.Phone" />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Carrier</label>
+                            <select class="form-control" name="Carrier_Id">
+                                @if (ViewBag.employee.PhoneMail == null)
+                                {
+                                    <option value="">Select None</option>
+                                    foreach (Carrier u in ViewBag.carriers)
+                                    {
+                                        <option value=@u.Id>@u.Name</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value=@ViewBag.selectedcarrier.Id>@ViewBag.selectedcarrier.Name</option>
+                                    <option value="">Select None</option>
+                                    foreach (Carrier u in ViewBag.carriers)
+                                    {
+                                        <option value=@u.Id>@u.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <br />
+                        <div>
+                            <label>Role</label><br />
+                            @if (ViewBag.employee.Role == 0)
+                            {
+                                <input type="radio" name="Role" value=0 checked onclick="enable1099()"><span> Employee</span> <br />
+                            }
+                            else
+                            {
+                                <input type="radio" name="Role" value=0 onclick="enable1099()"><span> Employee</span><br />
+                            }
+                            @if (ViewBag.employee.Role == 1)
+                            {
+                                <input type="radio" name="Role" value=1 checked onclick="disable1099()"> <span>Manager</span><br />
+                            }
+                            else
+                            {
+                                <input type="radio" name="Role" value=1 onclick="disable1099()"> <span>Manager</span><br />
+                            }
+                        </div>
+                        <br />
+                        <div>
+                            @if (ViewBag.employee.Role == 0)
+                            {
+                                if (ViewBag.employee.IsChecked == "1099")
+                                {
+                                <input type="checkbox" name="IsChecked" value="1099" id="chk1099" checked> <span>1099</span><br />
+                                }
+                                else
+                                {
+                                <input type="checkbox" name="IsChecked" id="chk1099" value="1099"> <span>1099</span><br />
+                                }
+                            }
+                        </div>
+                        <br />
+                        <div>
+                            <label>Assign Manager</label>
+                            <select class="form-control" name="User_Id">
+                                @if (ViewBag.employee.User_Id == null)
+                                {
+                                    <option value="">Select None</option>
+                                    foreach (User u in ViewBag.managers)
+                                    {
+                                        <option value=@u.Id>@u.FirstName&nbsp;@u.LastName</option>
+                                    }
+                                }
+                                else
+                                {
+                                    User manager = new UserBL().getUserById(ViewBag.employee.User_Id);
+
+                                    <option value=@manager.Id>@manager.FirstName&nbsp;@manager.LastName</option>
+                                    <option value="">Select None</option>
+                                    foreach (User u in ViewBag.managers)
+                                    {
+                                        <option value=@u.Id>@u.FirstName&nbsp;@u.LastName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+
+<script>
+
+    function disable1099() {
+        $('#chk1099').attr("disabled", true);
+        $('#chk1099').val("");
+
+    }
+
+    function enable1099() {
+        $('#chk1099').attr("disabled", false);
+        $('#chk1099').val("1099");
+
+    }
+</script>
+
+

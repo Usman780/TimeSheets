@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "List Projects";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+@*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">*@
+
+<style>
+    h3, h4 {
+        color: #2a2b6e;
+    }
+</style>
+<div class="row">
+    <div class="col-xs-12">
+        <h3 class="header"><strong>List Projects</strong></h3>
+        <div class="clearfix">
+            <div class="pull-right tableTools-container"></div>
+        </div>
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div class="table-responsive" style="background-color:#EFF3F8;">
+            <table id="example" class="display table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Project Code</th>
+                        <th>Labor Categories</th>
+                        <th>Employees</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @*<tbody>
+                        @foreach (Project u in ViewBag.projects)
+                        {
+                            <tr>
+                                <td>@u.Code</td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary" href="@Url.Action("AssignLabourCategory", "User", new { Id = StringCipher.Base64Encode(u.Id.ToString()) })">Labor Category</a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary" href="@Url.Action("AssignProject", "User", new { Project_Id = u.Id })">Assign Employee</a>
+                                </td>
+                                <td>
+                                    &nbsp; <a class="green" href="@Url.Action("EditProject","User", new { Id = u.Id })">
+                                        <i class="ace-icon fa fa-pencil bigger-160"></i>
+                                    </a> &nbsp; &nbsp; &nbsp;
+                                    <a class="red" onclick="DeleteProject(@u.Id)" data-toggle="modal" data-target="#deleteModal">
+                                        <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>*@
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Warning</strong></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this project?</p>
+            </div>
+            <div class="modal-footer">
+                <form class="form-horizontal form-label-left" method="post" action="@Url.Action("ToggleProject", "User")">
+                    <input type="hidden" name="Id" id="projectId" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+                    <button type="submit" class="btn btn-primary">YES</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+
+    function DeleteProject(Id)
+    {
+        $('#projectId').val(Id);
+    }
+
+    $(document).ready(function () {
+
+        //Datatable without api binding
+        //$('#example').DataTable();
+
+         //Datatable with api binding
+        $('#example').DataTable(
+            {
+                "ajax": {
+                    "url": '@Url.Action("GetCompletedProjectsDataTable", "User")',
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "Code", "name": "Code" },
+                    { "data": "LabourCategories", "name": "LabourCategories" },
+                    { "data": "Employees", "name": "Employees" },
+                    { "data": "Id", "name": "Id" }
+
+                ],
+
+                'columnDefs': [
+
+                    {
+                        render: function (data, type, full, meta) {
+                           return ` &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="red" title="Unmark" href="../User/UnmarkProject?Id=` + full.Id + `">
+                                    <i class="ace-icon fa fa-close bigger-160"></i>
+                                </a>
+                                `;
+                        },
+                        targets: 3
+                    }
+                ],
+                "serverSide": "true",
+
+                "processing": "true",
+                "dom": '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+                "language":
+                {
+                    "processing": "Processing... Please wait",
+                    "search": "<span>Filter:</span> _INPUT_",
+                    "searchPlaceholder": "Type to filter...",
+                    "lengthMenu": "<span>Show:</span> _MENU_",
+                    "paginate": { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+                }
+            });
+    });
+</script>

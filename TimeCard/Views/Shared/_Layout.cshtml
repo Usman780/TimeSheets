@@ -1,0 +1,541 @@
+﻿@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@using TimeCard.BL
+@model IEnumerable<TimeCard.Models.User>
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>Dashboard</title>
+
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="~/Content/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <!-- text fonts -->
+    <link rel="stylesheet" href="~/Content/assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="~/Content/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="~/Content/assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="~/Content/assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+      <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+    <!-- inline styles related to this page -->
+    <!-- ace settings handler -->
+    <script src="~/Content/assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .nav-list > li > a{
+            height:48px;
+        }
+    </style>
+</head>
+
+<body class="no-skin">
+    @{
+        SessionDTO sessiondto = new SessionDTO();
+    }
+    <div id="navbar" class="navbar navbar-default          ace-save-state">
+        <div class="navbar-container ace-save-state" id="navbar-container">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+
+            <div class="navbar-header pull-left">
+                <a href="@Url.Action("Dashboard", "Home")" class="navbar-brand">
+
+                    <img src="~/Content/stc.png" width="150" height="80" class="responsive" />
+                </a>
+            </div>
+
+            <div class="navbar-buttons navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+                    <li class="light-blue dropdown-modal">
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <span class="user-info">
+                                @sessiondto.getName()
+                            </span>
+
+                            <i class="ace-icon fa fa-caret-down"></i>
+                        </a>
+
+                        <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                            <li>
+                                <a href="@Url.Action("ChangePassword", "Auth")">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li>
+                                <a href="@Url.Action("Logout", "Auth")">
+                                    <i class="ace-icon fa fa-power-off"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div><!-- /.navbar-container -->
+    </div>
+
+    <div class="main-container ace-save-state" id="main-container">
+        <script type="text/javascript">
+            try { ace.settings.loadState('main-container') } catch (e) { }
+        </script>
+
+        <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+            <script type="text/javascript">
+                try { ace.settings.loadState('sidebar') } catch (e) { }
+            </script>
+
+            <ul class="nav nav-list">
+                @if (sdto.getRole() == 2 || sdto.getRole() == 1)
+                {
+                    <li class="active">
+                        <a href="@Url.Action("Dashboard", "Home")">
+                            <i class="menu-icon fa fa-tachometer"></i>
+                            <span class="menu-text"> Dashboard </span>
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+                }
+                @if (sdto.getRole() == 2)
+                {
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-user"></i>
+                            <span class="menu-text"> Users </span>
+
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            <li class="">
+                                <a href="@Url.Action("ListUsers","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Active Users List
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("AddUser","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Add User
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("ListInactiveUsers","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Inactive Users List
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-tasks"></i>
+                            <span class="menu-text"> Projects </span>
+
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            <li class="">
+                                <a href="@Url.Action("ListProjects","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    @*List Projects*@
+                                    Active Projects
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("AddProject","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Add Project
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("ListCompletedProjects","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Completed Projects
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-user"></i>
+                            <span class="menu-text"> Labor Category </span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            <li class="">
+                                <a href="@Url.Action("ListLaborCategories","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    List Labor Categories
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("AddLaborCategory","User")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Add Labor Category
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+
+                    @*<li class="">
+                <a href="@Url.Action("AssignedEmployeesTimeSheet","Home")">
+                    <i class="menu-icon fa fa-file-excel-o"></i>
+                    <span class="menu-text">Timecard Query</span>
+                </a>
+                <b class="arrow"></b>
+            </li>*@
+
+
+
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-file-excel-o"></i>
+                            <span class="menu-text"> Reports </span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+
+
+
+                            <li class="">
+                                <a href="@Url.Action("AssignedEmployeesTimeSheet","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    TimeCard Query
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("ProjectReport","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Project Report
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("EmployeeHoursReport","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Employee Report
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("ApprovedTimeSheet","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Approved Time Sheets
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+
+
+
+                            <li class="">
+                                <a href="@Url.Action("MonthlyProjectHours","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Monthly Project Hours
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("PendingTimeCard","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Pending Time Cards
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("ProjectBudgetStatus","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Project Budget Status
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("DistributionReport","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Distribution Report
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    @*<li class="">
+                <a href="@Url.Action("PendingTimeCard","Home")" >
+                    <i class="menu-icon fa fa-clock-o"></i>
+                    <span class="menu-text"> Pending TimeCards </span>
+                </a>
+            </li>*@
+
+
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-home"></i>
+                            <span class="menu-text"> Vacation Bank </span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            <li class="">
+                                <a href="@Url.Action("ListVacationBank","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    List Vacation Bank
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("AddVacationBank","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Add Vacation Bank
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+
+                        </ul>
+                    </li>
+                    <br />
+                }
+
+
+                @if (sessiondto.getRole() == 1)
+                {
+                    <br />
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-file-excel-o"></i>
+                            <span class="menu-text"> Reports </span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+
+                            <li class="">
+                                <a href="@Url.Action("AssignedEmployeesTimeSheet", "Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    <span class="menu-text">Employees Report</span>
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("ProjectReport", "Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    <span class="menu-text">Projects Report</span>
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("ProjectBudgetStatus","Home")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Project Budget Status
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <br />
+
+                    <li class="">
+                        <a href="@Url.Action("PendingTimeCards", "Home")">
+                            <i class="menu-icon fa fa-clock-o"></i>
+                            <span class="menu-text">Pending Time Cards</span>
+                        </a>
+                        <b class="arrow"></b>
+                    </li>
+                    <br />
+
+                }
+                @if (sessiondto.getRole() == 0 || sessiondto.getRole() == 1)
+                {
+                    <li class="">
+                        <a href="@Url.Action("TimeSheetEntry","Home")">
+                            <i class="menu-icon fa fa-clock-o"></i>
+                            <span class="menu-text"> My Time Cards</span>
+                        </a>
+                        <b class="arrow"></b>
+                    </li>
+                    <br />
+                    @*<li class="">
+                <a href="@Url.Action("VacationBank","Home", new { User_Id = StringCipher.Base64Encode(sessiondto.getId().ToString() ) })">
+                    <i class="menu-icon fa fa-home"></i>
+                    <span class="menu-text"> Vacation Bank</span>
+                </a>
+                <b class="arrow"></b>
+            </li>*@
+
+                }
+                @if (sessiondto.getRole() == 1)
+                {
+                    <li class="">
+                        <a href="@Url.Action("ManagerEntryTime","Home")">
+                            <i class="menu-icon fa fa-clock-o"></i>
+                            <span class="menu-text"> My Entries</span>
+                        </a>
+                        <b class="arrow"></b>
+                    </li>
+
+                    @*<li class="">
+                <a href="@Url.Action("EmployeesVacationBank","Home", new { User_Id = StringCipher.Base64Encode(sessiondto.getId().ToString() ) })">
+                    <i class="menu-icon fa fa-home"></i>
+                    <span class="menu-text"> Employee's Vacation Bank</span>
+                </a>
+                <b class="arrow"></b>
+            </li>*@
+
+                }
+
+                @if (sessiondto.getRole() == 0)
+                {
+                    <br />
+                    <li class="">
+                        <a href="@Url.Action("EmployeeReport","Home")">
+                            <i class="menu-icon fa fa-clock-o"></i>
+                            <span class="menu-text"> Time Cards Report</span>
+                        </a>
+                        <b class="arrow"></b>
+                    </li>
+                }
+
+            </ul><!-- /.nav-list -->
+
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="main-content-inner">
+
+                <div class="page-content">
+                    <!-- /.ace-settings-container -->
+
+                    @RenderBody()
+
+                </div><!-- /.page-content -->
+            </div>
+        </div><!-- /.main-content -->
+
+        <div class="footer">
+            <div class="footer-inner">
+                <div class="footer-content">
+                    <span class="bigger-120">
+                        Developed by
+                        <a herf="#"><span style="color:#0005a7;"><strong>Strategic Technology Consulting </strong></span></a>&copy; 2018
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div><!-- /.main-container -->
+    <!-- basic scripts -->
+    <!--[if !IE]> -->
+    <script src="~/Content/assets/js/jquery-2.1.4.min.js"></script>
+
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        if ('ontouchstart' in document.documentElement) document.write("<script src='../Content/assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script src="~/Content/assets/js/bootstrap.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <!--[if lte IE 8]>
+      <script src="assets/js/excanvas.min.js"></script>
+    <![endif]-->
+    <script src="~/Content/assets/js/jquery-ui.custom.min.js"></script>
+    <script src="~/Content/assets/js/jquery.ui.touch-punch.min.js"></script>
+    <script src="~/Content/assets/js/jquery.easypiechart.min.js"></script>
+    <script src="~/Content/assets/js/jquery.sparkline.index.min.js"></script>
+    <script src="~/Content/assets/js/jquery.flot.min.js"></script>
+    <script src="~/Content/assets/js/jquery.flot.pie.min.js"></script>
+    <script src="~/Content/assets/js/jquery.flot.resize.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <script src="~/Content/assets/js/jquery.dataTables.min.js"></script>
+    <script src="~/Content/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+
+    <script src="~/Content/assets/js/dataTables.buttons.min.js"></script>
+    <script src="~/Content/assets/js/buttons.flash.min.js"></script>
+    <script src="~/Content/assets/js/buttons.html5.min.js"></script>
+    <script src="~/Content/assets/js/buttons.print.min.js"></script>
+    <script src="~/Content/assets/js/buttons.colVis.min.js"></script>
+    <script src="~/Content/assets/js/dataTables.select.min.js"></script>
+
+    <!-- ace scripts -->
+    <script src="~/Content/assets/js/ace-elements.min.js"></script>
+    <script src="~/Content/assets/js/ace.min.js"></script>
+</body>
+    </html>

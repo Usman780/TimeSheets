@@ -1,0 +1,1052 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="timecardModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Carrier">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Country" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Gateway" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EarnedVacationTime">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="Hours" Type="varchar" MaxLength="50" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="User_Id" Type="int" />
+        </EntityType>
+        <EntityType Name="EntryTime">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectUserCategory_Id" Type="int" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Hour" Type="float" Nullable="false" />
+          <Property Name="Is_Approved" Type="int" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+          <Property Name="Created_At" Type="datetime" Nullable="false" />
+          <Property Name="EntryTime_Id" Type="int" />
+          <Property Name="RejectReason" Type="varchar(max)" />
+          <Property Name="DeleteReason" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="LaborCategory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+          <Property Name="UpdatedAt" Type="datetime" />
+          <Property Name="OldLabourCategoryId" Type="int" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+          <Property Name="Budget" Type="varchar" MaxLength="255" />
+          <Property Name="LockDate" Type="date" />
+        </EntityType>
+        <EntityType Name="ProjectCategory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Project_Id" Type="int" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+          <Property Name="LaborCategory_Id" Type="int" Nullable="false" />
+          <Property Name="Cost" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="ProjectUserCategory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="User_Id" Type="int" Nullable="false" />
+          <Property Name="ProjectCategory_Id" Type="int" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StartDate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StartingDate" Type="datetime" Nullable="false" />
+          <Property Name="IsActive" Type="int" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" Nullable="false" />
+          <Property Name="Role" Type="int" Nullable="false" />
+          <Property Name="User_Id" Type="int" />
+          <Property Name="LabourCategoryId" Type="int" />
+          <Property Name="PhoneMail" Type="varchar" MaxLength="50" />
+          <Property Name="IsChecked" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="UserProjectReport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="ProjectId" Type="int" />
+          <Property Name="IsActive" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="VacationBank">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VacationHoursPerYear" Type="float" Nullable="false" />
+          <Property Name="AccuralVacationHours" Type="float" />
+          <Property Name="PayperiodCount" Type="int" Nullable="false" />
+          <Property Name="Is_Authorize" Type="int" />
+          <Property Name="User_Id" Type="int" Nullable="false" />
+          <Property Name="Created_Date" Type="datetime" />
+        </EntityType>
+        <Association Name="FK_ ProjectCategory _ToProject">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectCategory">
+              <PropertyRef Name="Project_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ ProjectUserCategory _ToProjectCategory">
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="1" />
+          <End Role="ProjectUserCategory" Type="Self.ProjectUserCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectUserCategory">
+              <PropertyRef Name="ProjectCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ ProjectUserCategory _ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="ProjectUserCategory" Type="Self.ProjectUserCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectUserCategory">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntryTime_ToEntryTime">
+          <End Role="EntryTime" Type="Self.EntryTime" Multiplicity="0..1" />
+          <End Role="EntryTime1" Type="Self.EntryTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EntryTime">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntryTime1">
+              <PropertyRef Name="EntryTime_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntryTime_ToProjectUserCategory">
+          <End Role="ProjectUserCategory" Type="Self.ProjectUserCategory" Multiplicity="1" />
+          <End Role="EntryTime" Type="Self.EntryTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectUserCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntryTime">
+              <PropertyRef Name="ProjectUserCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectCategory_ToLaborCategory">
+          <End Role="LaborCategory" Type="Self.LaborCategory" Multiplicity="1" />
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LaborCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectCategory">
+              <PropertyRef Name="LaborCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Table_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="EarnedVacationTime" Type="Self.EarnedVacationTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EarnedVacationTime">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="User1" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User1">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserProjectReport_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="UserProjectReport" Type="Self.UserProjectReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProjectReport">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserProjectReport_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="UserProjectReport" Type="Self.UserProjectReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProjectReport">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VacationBank_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="VacationBank" Type="Self.VacationBank" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VacationBank">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="EntryTime_AddUpdateEntryTime_sp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StatementType" Type="nvarchar" Mode="In" />
+          <Parameter Name="Id" Type="int" Mode="In" />
+          <Parameter Name="ProjectUserCategory_Id" Type="int" Mode="In" />
+          <Parameter Name="Date" Type="datetime" Mode="In" />
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="Hour" Type="float" Mode="In" />
+          <Parameter Name="Is_Approved" Type="int" Mode="In" />
+          <Parameter Name="Is_Authorize" Type="int" Mode="In" />
+          <Parameter Name="Created_At" Type="datetime" Mode="In" />
+          <Parameter Name="EntryTime_Id" Type="int" Mode="In" />
+          <Parameter Name="RejectReason" Type="varchar(max)" Mode="In" />
+          <Parameter Name="DeleteReason" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_GetAll_Carriers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_EarnedVacationTimes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_EntryTimes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_LaborCategorys" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_ProjectCategories" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_Projects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_ProjectUserCategorys" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_StartDates" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_UserProjectReports" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_Users" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_GetAll_VacationBanks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="VacationBank_AddUpdateVacationBank_sp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StatementType" Type="nvarchar" Mode="In" />
+          <Parameter Name="Id" Type="int" Mode="In" />
+          <Parameter Name="VacationHoursPerYear" Type="float" Mode="In" />
+          <Parameter Name="AccuralVacationHours" Type="float" Mode="In" />
+          <Parameter Name="PayperiodCount" Type="int" Mode="In" />
+          <Parameter Name="Is_Authorize" Type="int" Mode="In" />
+          <Parameter Name="User_Id" Type="int" Mode="In" />
+          <Parameter Name="Created_Date" Type="datetime" Mode="In" />
+        </Function>
+        <EntityContainer Name="timecardModelStoreContainer">
+          <EntitySet Name="Carrier" EntityType="Self.Carrier" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EarnedVacationTime" EntityType="Self.EarnedVacationTime" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EntryTime" EntityType="Self.EntryTime" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LaborCategory" EntityType="Self.LaborCategory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectCategory" EntityType="Self.ProjectCategory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectUserCategory" EntityType="Self.ProjectUserCategory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StartDate" EntityType="Self.StartDate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserProjectReport" EntityType="Self.UserProjectReport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VacationBank" EntityType="Self.VacationBank" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ ProjectCategory _ToProject" Association="Self.FK_ ProjectCategory _ToProject">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ ProjectUserCategory _ToProjectCategory" Association="Self.FK_ ProjectUserCategory _ToProjectCategory">
+            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+            <End Role="ProjectUserCategory" EntitySet="ProjectUserCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ ProjectUserCategory _ToUser" Association="Self.FK_ ProjectUserCategory _ToUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="ProjectUserCategory" EntitySet="ProjectUserCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntryTime_ToEntryTime" Association="Self.FK_EntryTime_ToEntryTime">
+            <End Role="EntryTime" EntitySet="EntryTime" />
+            <End Role="EntryTime1" EntitySet="EntryTime" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntryTime_ToProjectUserCategory" Association="Self.FK_EntryTime_ToProjectUserCategory">
+            <End Role="ProjectUserCategory" EntitySet="ProjectUserCategory" />
+            <End Role="EntryTime" EntitySet="EntryTime" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectCategory_ToLaborCategory" Association="Self.FK_ProjectCategory_ToLaborCategory">
+            <End Role="LaborCategory" EntitySet="LaborCategory" />
+            <End Role="ProjectCategory" EntitySet="ProjectCategory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Table_ToUser" Association="Self.FK_Table_ToUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="EarnedVacationTime" EntitySet="EarnedVacationTime" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_ToUser" Association="Self.FK_User_ToUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="User1" EntitySet="User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserProjectReport_Project" Association="Self.FK_UserProjectReport_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="UserProjectReport" EntitySet="UserProjectReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserProjectReport_User" Association="Self.FK_UserProjectReport_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserProjectReport" EntitySet="UserProjectReport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VacationBank_ToUser" Association="Self.FK_VacationBank_ToUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="VacationBank" EntitySet="VacationBank" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="timecardModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Carrier">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Country" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Gateway" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EarnedVacationTime">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Precision="3" />
+          <Property Name="Hours" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="User_Id" Type="Int32" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Table_ToUser" FromRole="EarnedVacationTime" ToRole="User" />
+        </EntityType>
+        <EntityType Name="EntryTime">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectUserCategory_Id" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Hour" Type="Double" Nullable="false" />
+          <Property Name="Is_Approved" Type="Int32" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+          <Property Name="Created_At" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EntryTime_Id" Type="Int32" />
+          <Property Name="RejectReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DeleteReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="EntryTime1" Relationship="Self.FK_EntryTime_ToEntryTime" FromRole="EntryTime" ToRole="EntryTime1" />
+          <NavigationProperty Name="EntryTime2" Relationship="Self.FK_EntryTime_ToEntryTime" FromRole="EntryTime1" ToRole="EntryTime" />
+          <NavigationProperty Name="ProjectUserCategory" Relationship="Self.FK_EntryTime_ToProjectUserCategory" FromRole="EntryTime" ToRole="ProjectUserCategory" />
+        </EntityType>
+        <EntityType Name="LaborCategory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+          <Property Name="OldLabourCategoryId" Type="Int32" />
+          <NavigationProperty Name="ProjectCategories" Relationship="Self.FK_ProjectCategory_ToLaborCategory" FromRole="LaborCategory" ToRole="ProjectCategory" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+          <Property Name="Budget" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="LockDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="ProjectCategories" Relationship="Self.FK__ProjectCategory__ToProject" FromRole="Project" ToRole="ProjectCategory" />
+          <NavigationProperty Name="UserProjectReports" Relationship="Self.FK_UserProjectReport_Project" FromRole="Project" ToRole="UserProjectReport" />
+        </EntityType>
+        <EntityType Name="ProjectCategory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Project_Id" Type="Int32" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+          <Property Name="LaborCategory_Id" Type="Int32" Nullable="false" />
+          <Property Name="Cost" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="LaborCategory" Relationship="Self.FK_ProjectCategory_ToLaborCategory" FromRole="ProjectCategory" ToRole="LaborCategory" />
+          <NavigationProperty Name="Project" Relationship="Self.FK__ProjectCategory__ToProject" FromRole="ProjectCategory" ToRole="Project" />
+          <NavigationProperty Name="ProjectUserCategories" Relationship="Self.FK__ProjectUserCategory__ToProjectCategory" FromRole="ProjectCategory" ToRole="ProjectUserCategory" />
+        </EntityType>
+        <EntityType Name="ProjectUserCategory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="User_Id" Type="Int32" Nullable="false" />
+          <Property Name="ProjectCategory_Id" Type="Int32" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="EntryTimes" Relationship="Self.FK_EntryTime_ToProjectUserCategory" FromRole="ProjectUserCategory" ToRole="EntryTime" />
+          <NavigationProperty Name="ProjectCategory" Relationship="Self.FK__ProjectUserCategory__ToProjectCategory" FromRole="ProjectUserCategory" ToRole="ProjectCategory" />
+          <NavigationProperty Name="User" Relationship="Self.FK__ProjectUserCategory__ToUser" FromRole="ProjectUserCategory" ToRole="User" />
+        </EntityType>
+        <EntityType Name="StartDate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StartingDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsActive" Type="Int32" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" Nullable="false" />
+          <Property Name="Role" Type="Int32" Nullable="false" />
+          <Property Name="User_Id" Type="Int32" />
+          <Property Name="LabourCategoryId" Type="Int32" />
+          <Property Name="PhoneMail" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsChecked" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EarnedVacationTimes" Relationship="Self.FK_Table_ToUser" FromRole="User" ToRole="EarnedVacationTime" />
+          <NavigationProperty Name="ProjectUserCategories" Relationship="Self.FK__ProjectUserCategory__ToUser" FromRole="User" ToRole="ProjectUserCategory" />
+          <NavigationProperty Name="User1" Relationship="Self.FK_User_ToUser" FromRole="User" ToRole="User1" />
+          <NavigationProperty Name="User2" Relationship="Self.FK_User_ToUser" FromRole="User1" ToRole="User" />
+          <NavigationProperty Name="UserProjectReports" Relationship="Self.FK_UserProjectReport_User" FromRole="User" ToRole="UserProjectReport" />
+          <NavigationProperty Name="VacationBanks" Relationship="Self.FK_VacationBank_ToUser" FromRole="User" ToRole="VacationBank" />
+        </EntityType>
+        <EntityType Name="UserProjectReport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="ProjectId" Type="Int32" />
+          <Property Name="IsActive" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Project" Relationship="Self.FK_UserProjectReport_Project" FromRole="UserProjectReport" ToRole="Project" />
+          <NavigationProperty Name="User" Relationship="Self.FK_UserProjectReport_User" FromRole="UserProjectReport" ToRole="User" />
+        </EntityType>
+        <EntityType Name="VacationBank">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VacationHoursPerYear" Type="Double" Nullable="false" />
+          <Property Name="AccuralVacationHours" Type="Double" />
+          <Property Name="PayperiodCount" Type="Int32" Nullable="false" />
+          <Property Name="Is_Authorize" Type="Int32" />
+          <Property Name="User_Id" Type="Int32" Nullable="false" />
+          <Property Name="Created_Date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="User" Relationship="Self.FK_VacationBank_ToUser" FromRole="VacationBank" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Table_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="EarnedVacationTime" Type="Self.EarnedVacationTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EarnedVacationTime">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntryTime_ToEntryTime">
+          <End Role="EntryTime" Type="Self.EntryTime" Multiplicity="0..1" />
+          <End Role="EntryTime1" Type="Self.EntryTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EntryTime">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntryTime1">
+              <PropertyRef Name="EntryTime_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EntryTime_ToProjectUserCategory">
+          <End Role="ProjectUserCategory" Type="Self.ProjectUserCategory" Multiplicity="1" />
+          <End Role="EntryTime" Type="Self.EntryTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectUserCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EntryTime">
+              <PropertyRef Name="ProjectUserCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectCategory_ToLaborCategory">
+          <End Role="LaborCategory" Type="Self.LaborCategory" Multiplicity="1" />
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LaborCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectCategory">
+              <PropertyRef Name="LaborCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProjectCategory__ToProject">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectCategory">
+              <PropertyRef Name="Project_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserProjectReport_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="UserProjectReport" Type="Self.UserProjectReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProjectReport">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProjectUserCategory__ToProjectCategory">
+          <End Role="ProjectCategory" Type="Self.ProjectCategory" Multiplicity="1" />
+          <End Role="ProjectUserCategory" Type="Self.ProjectUserCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectUserCategory">
+              <PropertyRef Name="ProjectCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProjectUserCategory__ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="ProjectUserCategory" Type="Self.ProjectUserCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectUserCategory">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="User1" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User1">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserProjectReport_User">
+          <End Role="User" Type="Self.User" Multiplicity="0..1" />
+          <End Role="UserProjectReport" Type="Self.UserProjectReport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserProjectReport">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VacationBank_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="VacationBank" Type="Self.VacationBank" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="VacationBank">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="timecardEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Carriers" EntityType="Self.Carrier" />
+          <EntitySet Name="EarnedVacationTimes" EntityType="Self.EarnedVacationTime" />
+          <EntitySet Name="EntryTimes" EntityType="Self.EntryTime" />
+          <EntitySet Name="LaborCategories" EntityType="Self.LaborCategory" />
+          <EntitySet Name="Projects" EntityType="Self.Project" />
+          <EntitySet Name="ProjectCategories" EntityType="Self.ProjectCategory" />
+          <EntitySet Name="ProjectUserCategories" EntityType="Self.ProjectUserCategory" />
+          <EntitySet Name="StartDates" EntityType="Self.StartDate" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="UserProjectReports" EntityType="Self.UserProjectReport" />
+          <EntitySet Name="VacationBanks" EntityType="Self.VacationBank" />
+          <AssociationSet Name="FK_Table_ToUser" Association="Self.FK_Table_ToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="EarnedVacationTime" EntitySet="EarnedVacationTimes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntryTime_ToEntryTime" Association="Self.FK_EntryTime_ToEntryTime">
+            <End Role="EntryTime" EntitySet="EntryTimes" />
+            <End Role="EntryTime1" EntitySet="EntryTimes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EntryTime_ToProjectUserCategory" Association="Self.FK_EntryTime_ToProjectUserCategory">
+            <End Role="ProjectUserCategory" EntitySet="ProjectUserCategories" />
+            <End Role="EntryTime" EntitySet="EntryTimes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectCategory_ToLaborCategory" Association="Self.FK_ProjectCategory_ToLaborCategory">
+            <End Role="LaborCategory" EntitySet="LaborCategories" />
+            <End Role="ProjectCategory" EntitySet="ProjectCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProjectCategory__ToProject" Association="Self.FK__ProjectCategory__ToProject">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="ProjectCategory" EntitySet="ProjectCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserProjectReport_Project" Association="Self.FK_UserProjectReport_Project">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="UserProjectReport" EntitySet="UserProjectReports" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProjectUserCategory__ToProjectCategory" Association="Self.FK__ProjectUserCategory__ToProjectCategory">
+            <End Role="ProjectCategory" EntitySet="ProjectCategories" />
+            <End Role="ProjectUserCategory" EntitySet="ProjectUserCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProjectUserCategory__ToUser" Association="Self.FK__ProjectUserCategory__ToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="ProjectUserCategory" EntitySet="ProjectUserCategories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_ToUser" Association="Self.FK_User_ToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="User1" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserProjectReport_User" Association="Self.FK_UserProjectReport_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserProjectReport" EntitySet="UserProjectReports" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VacationBank_ToUser" Association="Self.FK_VacationBank_ToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="VacationBank" EntitySet="VacationBanks" />
+          </AssociationSet>
+          <FunctionImport Name="EntryTime_AddUpdateEntryTime_sp" ReturnType="Collection(timecardModel.EntryTime_AddUpdateEntryTime_sp_Result)">
+            <Parameter Name="StatementType" Mode="In" Type="String" />
+            <Parameter Name="Id" Mode="In" Type="Int32" />
+            <Parameter Name="ProjectUserCategory_Id" Mode="In" Type="Int32" />
+            <Parameter Name="Date" Mode="In" Type="DateTime" />
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="Hour" Mode="In" Type="Double" />
+            <Parameter Name="Is_Approved" Mode="In" Type="Int32" />
+            <Parameter Name="Is_Authorize" Mode="In" Type="Int32" />
+            <Parameter Name="Created_At" Mode="In" Type="DateTime" />
+            <Parameter Name="EntryTime_Id" Mode="In" Type="Int32" />
+            <Parameter Name="RejectReason" Mode="In" Type="String" />
+            <Parameter Name="DeleteReason" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_GetAll_Carriers" EntitySet="Carriers" ReturnType="Collection(timecardModel.Carrier)" />
+          <FunctionImport Name="sp_GetAll_EarnedVacationTimes" EntitySet="EarnedVacationTimes" ReturnType="Collection(timecardModel.EarnedVacationTime)" />
+          <FunctionImport Name="sp_GetAll_EntryTimes" EntitySet="EntryTimes" ReturnType="Collection(timecardModel.EntryTime)" />
+          <FunctionImport Name="sp_GetAll_LaborCategorys" EntitySet="LaborCategories" ReturnType="Collection(timecardModel.LaborCategory)" />
+          <FunctionImport Name="sp_GetAll_ProjectCategories" EntitySet="ProjectCategories" ReturnType="Collection(timecardModel.ProjectCategory)" />
+          <FunctionImport Name="sp_GetAll_Projects" EntitySet="Projects" ReturnType="Collection(timecardModel.Project)" />
+          <FunctionImport Name="sp_GetAll_ProjectUserCategorys" EntitySet="ProjectUserCategories" ReturnType="Collection(timecardModel.ProjectUserCategory)" />
+          <FunctionImport Name="sp_GetAll_StartDates" EntitySet="StartDates" ReturnType="Collection(timecardModel.StartDate)" />
+          <FunctionImport Name="sp_GetAll_UserProjectReports" EntitySet="UserProjectReports" ReturnType="Collection(timecardModel.UserProjectReport)" />
+          <FunctionImport Name="sp_GetAll_Users" EntitySet="Users" ReturnType="Collection(timecardModel.User)" />
+          <FunctionImport Name="sp_GetAll_VacationBanks" EntitySet="VacationBanks" ReturnType="Collection(timecardModel.VacationBank)" />
+          <FunctionImport Name="VacationBank_AddUpdateVacationBank_sp" ReturnType="Collection(timecardModel.VacationBank_AddUpdateVacationBank_sp_Result)">
+            <Parameter Name="StatementType" Mode="In" Type="String" />
+            <Parameter Name="Id" Mode="In" Type="Int32" />
+            <Parameter Name="VacationHoursPerYear" Mode="In" Type="Double" />
+            <Parameter Name="AccuralVacationHours" Mode="In" Type="Double" />
+            <Parameter Name="PayperiodCount" Mode="In" Type="Int32" />
+            <Parameter Name="Is_Authorize" Mode="In" Type="Int32" />
+            <Parameter Name="User_Id" Mode="In" Type="Int32" />
+            <Parameter Name="Created_Date" Mode="In" Type="DateTime" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="EntryTime_AddUpdateEntryTime_sp_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="ProjectUserCategory_Id" Nullable="false" />
+          <Property Type="DateTime" Name="Date" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="50" />
+          <Property Type="Double" Name="Hour" Nullable="false" />
+          <Property Type="Int32" Name="Is_Approved" Nullable="false" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+          <Property Type="DateTime" Name="Created_At" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="EntryTime_Id" Nullable="true" />
+          <Property Type="String" Name="RejectReason" Nullable="true" />
+          <Property Type="String" Name="DeleteReason" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_Carriers_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Country" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Gateway" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_EarnedVacationTimes_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="DateTime" Name="Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Hours" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Type" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="User_Id" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_EntryTimes_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="ProjectUserCategory_Id" Nullable="false" />
+          <Property Type="DateTime" Name="Date" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="50" />
+          <Property Type="Double" Name="Hour" Nullable="false" />
+          <Property Type="Int32" Name="Is_Approved" Nullable="false" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+          <Property Type="DateTime" Name="Created_At" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="EntryTime_Id" Nullable="true" />
+          <Property Type="String" Name="RejectReason" Nullable="true" />
+          <Property Type="String" Name="DeleteReason" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_LaborCategorys_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+          <Property Type="DateTime" Name="UpdatedAt" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="OldLabourCategoryId" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_ProjectCategories_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="Project_Id" Nullable="false" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+          <Property Type="Int32" Name="LaborCategory_Id" Nullable="false" />
+          <Property Type="String" Name="Cost" Nullable="true" MaxLength="250" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_Projects_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Code" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+          <Property Type="String" Name="Budget" Nullable="true" MaxLength="255" />
+          <Property Type="DateTime" Name="LockDate" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_ProjectUserCategorys_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="User_Id" Nullable="false" />
+          <Property Type="Int32" Name="ProjectCategory_Id" Nullable="false" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_StartDates_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="DateTime" Name="StartingDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="IsActive" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_UserProjectReports_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Int32" Name="UserId" Nullable="true" />
+          <Property Type="Int32" Name="ProjectId" Nullable="true" />
+          <Property Type="Int32" Name="IsActive" Nullable="true" />
+          <Property Type="DateTime" Name="CreatedAt" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_Users_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="FirstName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="LastName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Phone" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Password" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="false" />
+          <Property Type="Int32" Name="Role" Nullable="false" />
+          <Property Type="Int32" Name="User_Id" Nullable="true" />
+          <Property Type="Int32" Name="LabourCategoryId" Nullable="true" />
+          <Property Type="String" Name="PhoneMail" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="IsChecked" Nullable="true" MaxLength="255" />
+        </ComplexType>
+        <ComplexType Name="sp_GetAll_VacationBanks_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Double" Name="VacationHoursPerYear" Nullable="false" />
+          <Property Type="Double" Name="AccuralVacationHours" Nullable="true" />
+          <Property Type="Int32" Name="PayperiodCount" Nullable="false" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="true" />
+          <Property Type="Int32" Name="User_Id" Nullable="false" />
+          <Property Type="DateTime" Name="Created_Date" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="VacationBank_AddUpdateVacationBank_sp_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="Double" Name="VacationHoursPerYear" Nullable="false" />
+          <Property Type="Double" Name="AccuralVacationHours" Nullable="true" />
+          <Property Type="Int32" Name="PayperiodCount" Nullable="false" />
+          <Property Type="Int32" Name="Is_Authorize" Nullable="true" />
+          <Property Type="Int32" Name="User_Id" Nullable="false" />
+          <Property Type="DateTime" Name="Created_Date" Nullable="true" Precision="23" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="timecardModelStoreContainer" CdmEntityContainer="timecardEntities">
+          <EntitySetMapping Name="Carriers">
+            <EntityTypeMapping TypeName="timecardModel.Carrier">
+              <MappingFragment StoreEntitySet="Carrier">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="Gateway" ColumnName="Gateway" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EarnedVacationTimes">
+            <EntityTypeMapping TypeName="timecardModel.EarnedVacationTime">
+              <MappingFragment StoreEntitySet="EarnedVacationTime">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Hours" ColumnName="Hours" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EntryTimes">
+            <EntityTypeMapping TypeName="timecardModel.EntryTime">
+              <MappingFragment StoreEntitySet="EntryTime">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProjectUserCategory_Id" ColumnName="ProjectUserCategory_Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Hour" ColumnName="Hour" />
+                <ScalarProperty Name="Is_Approved" ColumnName="Is_Approved" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="Created_At" ColumnName="Created_At" />
+                <ScalarProperty Name="EntryTime_Id" ColumnName="EntryTime_Id" />
+                <ScalarProperty Name="RejectReason" ColumnName="RejectReason" />
+                <ScalarProperty Name="DeleteReason" ColumnName="DeleteReason" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LaborCategories">
+            <EntityTypeMapping TypeName="timecardModel.LaborCategory">
+              <MappingFragment StoreEntitySet="LaborCategory">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="UpdatedAt" ColumnName="UpdatedAt" />
+                <ScalarProperty Name="OldLabourCategoryId" ColumnName="OldLabourCategoryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="timecardModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="Budget" ColumnName="Budget" />
+                <ScalarProperty Name="LockDate" ColumnName="LockDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectCategories">
+            <EntityTypeMapping TypeName="timecardModel.ProjectCategory">
+              <MappingFragment StoreEntitySet="ProjectCategory">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Project_Id" ColumnName="Project_Id" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="LaborCategory_Id" ColumnName="LaborCategory_Id" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectUserCategories">
+            <EntityTypeMapping TypeName="timecardModel.ProjectUserCategory">
+              <MappingFragment StoreEntitySet="ProjectUserCategory">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+                <ScalarProperty Name="ProjectCategory_Id" ColumnName="ProjectCategory_Id" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StartDates">
+            <EntityTypeMapping TypeName="timecardModel.StartDate">
+              <MappingFragment StoreEntitySet="StartDate">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="StartingDate" ColumnName="StartingDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="timecardModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+                <ScalarProperty Name="LabourCategoryId" ColumnName="LabourCategoryId" />
+                <ScalarProperty Name="PhoneMail" ColumnName="PhoneMail" />
+                <ScalarProperty Name="IsChecked" ColumnName="IsChecked" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserProjectReports">
+            <EntityTypeMapping TypeName="timecardModel.UserProjectReport">
+              <MappingFragment StoreEntitySet="UserProjectReport">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VacationBanks">
+            <EntityTypeMapping TypeName="timecardModel.VacationBank">
+              <MappingFragment StoreEntitySet="VacationBank">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="VacationHoursPerYear" ColumnName="VacationHoursPerYear" />
+                <ScalarProperty Name="AccuralVacationHours" ColumnName="AccuralVacationHours" />
+                <ScalarProperty Name="PayperiodCount" ColumnName="PayperiodCount" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+                <ScalarProperty Name="Created_Date" ColumnName="Created_Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="EntryTime_AddUpdateEntryTime_sp" FunctionName="timecardModel.Store.EntryTime_AddUpdateEntryTime_sp">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="timecardModel.EntryTime_AddUpdateEntryTime_sp_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ProjectUserCategory_Id" ColumnName="ProjectUserCategory_Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Hour" ColumnName="Hour" />
+                <ScalarProperty Name="Is_Approved" ColumnName="Is_Approved" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="Created_At" ColumnName="Created_At" />
+                <ScalarProperty Name="EntryTime_Id" ColumnName="EntryTime_Id" />
+                <ScalarProperty Name="RejectReason" ColumnName="RejectReason" />
+                <ScalarProperty Name="DeleteReason" ColumnName="DeleteReason" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_Carriers" FunctionName="timecardModel.Store.sp_GetAll_Carriers">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_EarnedVacationTimes" FunctionName="timecardModel.Store.sp_GetAll_EarnedVacationTimes">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_EntryTimes" FunctionName="timecardModel.Store.sp_GetAll_EntryTimes">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_LaborCategorys" FunctionName="timecardModel.Store.sp_GetAll_LaborCategorys">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_ProjectCategories" FunctionName="timecardModel.Store.sp_GetAll_ProjectCategories">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_Projects" FunctionName="timecardModel.Store.sp_GetAll_Projects">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_ProjectUserCategorys" FunctionName="timecardModel.Store.sp_GetAll_ProjectUserCategorys">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_StartDates" FunctionName="timecardModel.Store.sp_GetAll_StartDates">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_UserProjectReports" FunctionName="timecardModel.Store.sp_GetAll_UserProjectReports">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_Users" FunctionName="timecardModel.Store.sp_GetAll_Users">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetAll_VacationBanks" FunctionName="timecardModel.Store.sp_GetAll_VacationBanks">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="VacationBank_AddUpdateVacationBank_sp" FunctionName="timecardModel.Store.VacationBank_AddUpdateVacationBank_sp">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="timecardModel.VacationBank_AddUpdateVacationBank_sp_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="VacationHoursPerYear" ColumnName="VacationHoursPerYear" />
+                <ScalarProperty Name="AccuralVacationHours" ColumnName="AccuralVacationHours" />
+                <ScalarProperty Name="PayperiodCount" ColumnName="PayperiodCount" />
+                <ScalarProperty Name="Is_Authorize" ColumnName="Is_Authorize" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+                <ScalarProperty Name="Created_Date" ColumnName="Created_Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

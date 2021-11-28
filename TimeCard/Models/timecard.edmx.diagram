@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="06db006eee2c4d858b0d6639c9889d61" Name="Diagram1" ZoomLevel="66">
+        <EntityTypeShape EntityType="timecardModel.Carrier" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.EarnedVacationTime" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.EntryTime" Width="1.5" PointX="5.25" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.LaborCategory" Width="1.5" PointX="1.5" PointY="19.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.Project" Width="1.5" PointX="3.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.ProjectCategory" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.ProjectUserCategory" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.StartDate" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.User" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.UserProjectReport" Width="1.5" PointX="6" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="timecardModel.VacationBank" Width="1.5" PointX="3" PointY="15.75" IsExpanded="true" />
+        <AssociationConnector Association="timecardModel.FK_Table_ToUser" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_EntryTime_ToEntryTime" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_EntryTime_ToProjectUserCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_ProjectCategory_ToLaborCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK__ProjectCategory__ToProject" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_UserProjectReport_Project" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK__ProjectUserCategory__ToProjectCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK__ProjectUserCategory__ToUser" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_User_ToUser" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_UserProjectReport_User" ManuallyRouted="false" />
+        <AssociationConnector Association="timecardModel.FK_VacationBank_ToUser" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

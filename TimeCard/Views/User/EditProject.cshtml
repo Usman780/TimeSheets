@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Edit Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+<style>
+    h4 {
+        color: #2a2b6e;
+    }
+</style>
+<br /><br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Edit Project</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("UpdateProject", "User")">
+                        <input type="hidden" name="Id" value="@ViewBag.p.Id" />
+                        <div>
+                            <label>Code</label>
+                            <input type="text" class="form-control" name="Code" value="@ViewBag.p.Code" required />
+                        </div>
+                        <br />
+                        @{ 
+                            string budget = "";
+                            if(ViewBag.p.Budget == null || ViewBag.p.Budget == "")
+                            {
+                                budget = "0";
+                            }
+                            else
+                            {
+                                budget = Convert.ToString(ViewBag.p.Budget);
+                            }
+                        }
+                        <div>
+                            <label>Budget</label>
+                            <input type="number" step="0.01" class="form-control" name="Budget" value="@budget" required />
+                        </div>
+                        <br />
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+
+
+
+

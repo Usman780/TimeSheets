@@ -1,0 +1,496 @@
+﻿@{
+    ViewBag.Title = "Employee Hours Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    h3 {
+        color: #2a2b6e;
+    }
+
+    #addbtn {
+        font-size: 17px;
+        color: #2a2b6e;
+    }
+
+    #box {
+        background-color: #0005a7;
+        padding: 20px;
+        width: 200px;
+        height: 60px;
+        margin-bottom: 60px;
+    }
+
+    #boxheading {
+        color: white;
+    }
+
+    p {
+        color: white;
+    }
+
+    .control-label {
+        color: #0005a7;
+    }
+
+    #expandBtn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .SheetBtn {
+        display: none;
+        color: #0005a7 !important;
+        font-size: large;
+    }
+
+    .timeSheet {
+        display: block;
+    }
+
+    @@media only screen and (max-width:400px) {
+        .timeSheet {
+            display: none;
+        }
+
+        .SheetBtn {
+            display: contents;
+        }
+    }
+</style>
+
+<div class="row " style=" border:5px solid #424ef4; border-radius:10px; color:white;" id="Sheet">
+    <div class="col-xs-12" style="background-color:#0005A7;">
+        @if (sdto.getRole() == 1)
+        {
+            <div class="row">
+
+                <div class="col-lg-6" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*Start Date:</strong></label>
+                        <input type="date" id="startdate" name="startdate" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-lg-6" style="padding: 20px;">
+                    <div class="form-group">
+                        <label><strong>*End Date:</strong></label>
+                        <input type="date" id="enddate" name="enddate" class="form-control">
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <button onclick="entriesSearch()" class="btn btn-primary pull-right">Get Reports</button><br />
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <form action="@Url.Action("EmployeeHoursSearchReport", "Home")" method="post">
+                <div class="row">
+
+                    <div class="col-md-2 col-lg-6" style="padding: 20px;">
+                        <div class="form-group">
+                            <label><strong>*Start Date:</strong></label>
+                            <input type="date" name="startdate" class="form-control" value="@ViewBag.SD">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-lg-6" style="padding: 20px;">
+                        <div class="form-group">
+                            <label><strong>*End Date:</strong></label>
+                            <input type="date" name="enddate" class="form-control" value="@ViewBag.ED">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div style="padding: 20px;">
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary pull-right" value="Get Reports"><br />
+                            @*<button onclick="adminentriesSearch()" class="btn btn-primary pull-right">Get Reports</button><br />*@
+                        </div>
+                    </div>
+                </div>
+
+
+            </form>
+        }
+    </div>
+</div>
+
+<div class="row text-center">
+    <button href="#" class="btn btn-sm btn-primary SheetBtn" onclick="ShowTimeSheet()">Show Customer Report</button>
+</div>
+
+@{
+    double totalhours = 0;
+}
+<div class="row timeSheet">
+    <div class="col-xs-12" style="height:auto; padding:5%;">
+        <h3 class="header"><strong>Time Sheet Entry</strong></h3><br />
+        <div class="clearfix">
+            <div class="pull-right tableTools-container">
+                @*   <form method="post" action="@Url.Action("EmployeeHoursEntriesExcelSheet", "ExcelReport")">*@
+
+                @*<input type="hidden" name="StartDate" value="@ViewBag.SD" />
+                    <input type="hidden" name="EndDate" value="@ViewBag.ED" />*@
+                <input type="hidden" name="StartDate" id="StartDate" value="@ViewBag.SD" />
+                <input type="hidden" name="EndDate" id="EndDate" value="@ViewBag.ED" />
+
+                @* <button type="submit" class="btn btn-primary pull-right">Get Excel Sheet</button><br />*@
+                <a type="submit" class="btn btn-primary pull-right" onclick="generatePDF()">Get Excel Sheet</a><br />
+                @*</form>*@
+            </div>
+        </div>
+
+
+        <!-- div.table-responsive -->
+        <!-- div.dataTables_borderWrap -->
+        <div class="table-responsive" style="background-color:#EFF3F8;">
+            <table id="myTable" class="display table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    @*<th>Date</th>
+                            <th>Project</th>*@
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Total Hours</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                @{ double ttl = 0;}
+                @foreach (var item in ViewBag.allEntries1)
+                {
+                    <tr>
+                        <td>@item.FName</td>
+                        <td>@item.LName</td>
+
+                        @foreach (var item1 in ViewBag.allEntries)
+                        {
+
+                            if (item.Name == item1.Name)
+                            {
+
+                                ttl += Convert.ToDouble(item1.Hours);
+                            }
+                        }
+
+                        <td>@ttl</td>
+
+                    </tr>
+                    totalhours = totalhours + ttl;
+                    ttl = 0;
+                }
+                @*@foreach (EntryTime e in ViewBag.allEntries)
+                        {
+                            <tr>
+                                <td>@e.Date.ToString("MM/dd/yyyy")</td>
+                                <td>@e.ProjectUserCategory.ProjectCategory.Project.Code</td>
+                                <td>@e.ProjectUserCategory.User.FirstName&nbsp;@e.ProjectUserCategory.User.LastName</td>
+
+                                <td>@e.Hour</td>
+
+                            </tr>
+                            totalhours = totalhours + e.Hour;
+                        }*@
+
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="col-md-offset-9 col-md-3 col-xs-12">
+                <h4 style="color:white;" id="box">Total Hours : @totalhours </h4>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+<!-- DonloadFile Message Modal -->
+<div class="modal fade" id="DonloadFileModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="color: black; text-align: center;"><strong>Employee Assignments</strong></h4>
+            </div>
+            <div class="modal-body">
+                <p style="color: black; text-align: center;">Your file will be downloaded in a few minutes, check your email Account for the Link!</p>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Reason Modal -->
+<div class="modal fade" id="reasonModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Reason</strong></h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="reasonEntry" style="color: black;" readonly />
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><strong>Delete Reason</strong></h4>
+            </div>
+            <form class="form-horizontal form-label-left" method="post" action="@Url.Action("DeleteTimeSheetEntry", "Home")">
+                <input type="hidden" name="Id" id="deleteEntryId" />
+                <div class="modal-body">
+                    <textarea class="form-control" rows="4" name="deletereason" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //Datatable without api binding
+        $('#myTable').DataTable({
+            "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]]
+        });
+    });
+
+    function ReasonEntry(Reason) {
+        $('#reasonEntry').val(Reason);
+    }
+
+    function DeleteEntry(Id)
+    {
+        $('#deleteEntryId').val(Id);
+    }
+
+
+    //Entries Search
+    function entriesSearch() {
+
+        var projectid = document.getElementById("projectid").value;
+        var startdate = document.getElementById("startdate").value;
+        var enddate = document.getElementById("enddate").value;
+        //  var employeeid = document.getElementById("employeeid").value;
+        //var laborcategories = document.getElementById("laborcategories").value;
+        // var status = document.getElementById("status").value;
+
+        $.ajax({
+            dataType: "json",
+            type: "GET",
+            url: '@Url.Action("AssignedEmployeesReport", "Home")',
+            contentType: "application/json; charset=utf-8",
+            data: { startdate: startdate, enddate: enddate, Project_Id: projectid},
+            success: function (response) {
+
+                document.getElementById("ProjectId").value = projectid;
+                document.getElementById("StartDate").value = startdate;
+                document.getElementById("EndDate").value = enddate;
+                // document.getElementById("EmployeeId").value = employeeid;
+                // document.getElementById("EStatus").value = status;
+
+
+                $("#myTable > tbody").html("");
+                var i = 0;
+                var totalhours = 0;
+                $.each(response, function () {
+
+                    if (response[i].Status == "Rejected")
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Project + '</td><td>' + response[i].Name +
+                            '</td><td>' + response[i].LCAT + '</td><td>' + response[i].Hours + '</td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = totalhours + parseInt(response[i].Hours);
+                        i++;
+                    }
+                    else
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Project + '</td><td>' + response[i].Name +
+                            '</td><td>' + response[i].LCAT + '</td><td>' + response[i].Hours + '</td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = totalhours + parseInt(response[i].Hours);
+                        i++;
+                    }
+                });
+                $("#box").html("");
+                $("#box").html("Total Hours : " + totalhours);
+            },
+            error: function (response) {
+                alert('Error');
+            }
+
+        });
+
+    }
+
+    //Admin Entries Search
+    @*function adminentriesSearch() {
+
+        //var projectid = document.getElementById("projectid").value;
+        var SDate = document.getElementById("startdate").value;
+        var EDate = document.getElementById("enddate").value;
+       // var employeeid = document.getElementById("employeeid").value;
+        //var laborcategories = document.getElementById("laborcategories").value;
+        //var status = document.getElementById("status").value;
+
+        $.ajax({
+            dataType: "json",
+            type: "GET",
+            url: '@Url.Action("AdminEmployeesReport", "Home")',
+            contentType: "application/json; charset=utf-8",
+            data: { startdate: SDate, enddate: EDate},
+            success: function (response) {
+
+
+                document.getElementById("startdate").value = SDate;
+                document.getElementById("enddate").value = EDate;
+                //document.getElementById("ProjectId").value = projectid;
+
+                document.getElementById("statdate").value = SDate;
+                document.getElementById("endate").value = EDate;
+
+               // document.getElementById("EmployeeId").value = employeeid;
+                //document.getElementById("LaborCategories").value = laborcategories;
+                //document.getElementById("EStatus").value = status;
+
+                $("#myTable > tbody").html("");
+                var i = 0;
+                var totalhours = 0.0;
+                $.each(response, function () {
+
+                    if (response[i].Status == "Rejected")
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Project + '</td><td>' + response[i].Name +
+                            '</td><td>' + response[i].Hours + '</td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = parseFloat(totalhours + parseInt(response[i].Hours));
+
+                        i++;
+                    }
+                    else
+                    {
+                        var trobject = '<tr><td>' + response[i].Date + '</td><td>' + response[i].Project + '</td><td>' + response[i].Name +
+                            '</td><td>' + response[i].Hours + '</td>';
+
+                        trobject = trobject + '</tr>';
+                        $('#myTable > tbody:last-child').append(trobject);
+                        totalhours = parseFloat(totalhours + parseInt(response[i].Hours));
+
+                        i++;
+                    }
+                });
+                $("#box").html("");
+                $("#box").html("Total Hours : " + parseFloat(totalhours));
+            },
+            error: function (response) {
+                alert('Error');
+            }
+
+        });
+
+    }*@
+
+    //Labor Categories
+    function search() {
+        var projectid;
+
+        projectid = document.getElementById("projectid").value;
+
+        $.ajax({
+            dataType: "json",
+            type: "GET",
+            url: '@Url.Action("LaborCategoriesSearch", "Home")',
+            contentType: "application/json; charset=utf-8",
+            data: { projectId: projectid },
+            success: function (response) {
+                $("#laborcategories").html("");
+                var trobject = '<option value="">All</option>';
+                $('#laborcategories').append(trobject);
+                var i = 0;
+                $.each(response, function () {
+
+                    trobject = '<option value="">' + response[i].Name + '</option>';
+
+                    $('#laborcategories').append(trobject);
+                    i++;
+                });
+                $("#box").html("");
+                $("#box").html("Total Hours : " + totalhours);
+            },
+            error: function (response) {
+                alert('Error');
+            }
+        });
+
+    }
+
+    function ShowTimeSheet() {
+        $('.timeSheet').toggle('Show');
+
+    }
+</script>
+
+
+
+<script>
+    function generatePDF() {
+        var StartDate = document.getElementById("StartDate").value;
+        var EndDate = document.getElementById("EndDate").value;
+        $.ajax({
+            type: 'POST',
+            url: "../ExcelReport/AsyncEmployeeHoursEntriesExcelSheet",
+            data: {
+                StartDate: StartDate,
+                EndDate: EndDate
+            },
+            //dataType: "json",
+            success: function (data) {
+                $("#DonloadFileModal").modal("show");
+            },
+            error: function () { alert('fail'); }
+        });
+    }
+</script>

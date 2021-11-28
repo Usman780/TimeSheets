@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "Edit Vacation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using TimeCard.Models
+@using TimeCard.Helping_Classes
+@using TimeCard.BL
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<br />
+@if (ViewBag.msg != "")
+{
+    <center><h2><strong>@ViewBag.msg</strong></h2></center>
+    <br />
+}
+
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>Edit Vacation Bank</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form class="form-horizontal" method="post" action="@Url.Action("UpdateVacationBank", "Home")">
+                        <input type="hidden" name="Id" value="@ViewBag.vacation.Id" />
+                        <input type="hidden" class="form-control" name="User_Id" value="@ViewBag.vacation.User_Id" />
+                        @{ 
+                            string name = ViewBag.vacation.User.FirstName + ' ' + ViewBag.vacation.User.LastName;
+                        }
+                        <div>
+                            <label>User</label>
+                            <input type="text" class="form-control" disabled value="@name" />
+                        </div>
+                        <br />
+                        <div>
+                            <label>Vacation Hours</label>
+                            <input type="number" class="form-control" name="VacationHoursPerYear" value="@ViewBag.vacation.VacationHoursPerYear" required />
+                        </div>
+                        <br />
+                        @*<div>
+                            <label>Annual Accural Hours</label>
+                            <input type="number" class="form-control" name="AccuralVacationHours" value="@ViewBag.vacation.AccuralVacationHours" />
+                        </div>
+                        <br />*@
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                        <br /><br /><br />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.span -->
+</div>
+

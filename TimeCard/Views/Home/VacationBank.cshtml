@@ -1,0 +1,184 @@
+﻿
+@{
+    ViewBag.Title = "Vacation Bank";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using TimeCard.Models
+@using TimeCard.BL
+@using TimeCard.Helping_Classes
+@{
+    SessionDTO sdto = new SessionDTO();
+}
+<style>
+    p{
+        line-height:1px;
+    }
+</style>
+<br /><br />
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+        <div class="widget-box">
+            <div class="widget-header">
+                <center><h4 class="widget-title"><strong>@ViewBag.TableTitle's Vacation Bank</strong></h4></center>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div>
+                        <h3>Current Vacation Time</h3>
+                        <br />
+                        @if (ViewBag.VacationHours == null)
+                        {
+                        <p style="margin-left:15px;">Annual Vacation time Accrued: 0</p>
+                        }
+                        else
+                        {
+                            <p style="margin-left:15px;">Annual Vacation time Accrued: @String.Format("{0:0.00}", ViewBag.VacationHours)</p>
+                        }
+                    </div>
+                    <br />
+
+                    <div>
+                        @if (ViewBag.AccuralVacationHours == null)
+                        {
+                        <p style="margin-left:25px;">Total Available Hours: 0</p>
+                        }
+                        else
+                        {
+                            <p style="margin-left:25px;">Total Available Hours: @String.Format("{0:0.00}", ViewBag.AccuralVacationHours)</p>
+                        }
+                    </div>
+                    <br />
+                    <div>
+                        <h3>Historical Vacation Time</h3>
+                        <br />
+                        @if (ViewBag.TotalAccuralHours == null)
+                        {
+                        <p style="margin-left:15px;">Total Hours Earned: 0</p>
+                        }
+                        else
+                        {
+                            <p style="margin-left:15px;">Total Hours Earned:@String.Format("{0:0.00}", ViewBag.TotalAccuralHours)</p>
+                        }
+                    </div>
+                    </br>
+                    <div>
+                        @if (ViewBag.TotalHoursUsed == null)
+                        {
+                        <p style="margin-left:25px;">Total Hours Used: 0</p>
+                        }
+                        else
+                        {
+                            <p style="margin-left:25px;">Total Hours Used: @String.Format("{0:0.00}", ViewBag.TotalHoursUsed)</p>
+                        }
+                    </div>
+                    </br>
+                    @*<div>
+                            <label>Available Vacation Hours</label>
+                            <input type="text" class="form-control" value="@ViewBag.AvailableHours" readonly />
+                        </div>*@
+                    <br />
+                </div>
+            </div>
+        </div>
+        <br />
+    </div><!-- /.span -->
+</div>
+
+@*@if (sdto.getRole() == 1)
+{
+    <br /><br />
+    <div class="row">
+        <div class="col-xs-12">
+            <h3 class="header smaller lighter blue"><strong>Employees Vacation Hours</strong></h3>
+            <div class="clearfix">
+                <div class="pull-right tableTools-container"></div>
+            </div>
+            <!-- div.table-responsive -->
+            <!-- div.dataTables_borderWrap -->
+            <div>
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th> Accrual Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.EmployeesHourscount > 0)
+                        {
+                            foreach (EmployeesHoursDTO e in ViewBag.EmployeesHours)
+                            {
+                                <tr>
+                                    <td>@e.EmployeeName</td>
+                                    <td>@e.AvailableVacationHours</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else if (sdto.getRole() == 0)
+{*@
+    <br /><br />
+    <div class="row">
+        <div class="col-xs-12">
+            <h3 class="header smaller lighter blue"><strong>History</strong></h3>
+            <div class="clearfix">
+                <div class="pull-right tableTools-container"></div>
+            </div>
+            <!-- div.table-responsive -->
+            <!-- div.dataTables_borderWrap -->
+            <div>
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Hours</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.TotalHoursUsed > 0.0)
+                        {
+                            foreach (EntryTime e in ViewBag.UsedVacationTimeList)
+                            {
+                                <tr>
+                                    <td>@e.Date.ToShortDateString()</td>
+                                    <td>@e.Hour</td>
+                                    <td>Vacation</td>
+                                </tr>
+                            }
+
+
+                        }
+                        @if (ViewBag.EVTListcount > 0)
+                        {
+                        foreach (EarnedVacationTime evt in ViewBag.EVTList)
+                        {
+                        <tr>
+                            <td>@evt.Date.Value.ToShortDateString()</td>
+                            <td>@System.Math.Round(Convert.ToDouble(evt.Hours), 2)</td>
+                            @if (evt.Type == "automatic accrual")
+                            {
+                                <td>Accrual Add</td>
+                            }
+                            else
+                            {
+                                <td>Manual Add</td>
+                            }
+
+                        </tr>
+                        }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@*}*@
+
+
